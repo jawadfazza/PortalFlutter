@@ -1,35 +1,45 @@
-
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shopping/Screens/ProductListingScreen.dart';
+import 'package:flutter_i18n/flutter_i18n_delegate.dart';
+import 'package:flutter_i18n/loaders/decoders/json_decode_strategy.dart';
+import 'package:flutter_i18n/loaders/file_translation_loader.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'Screens/Account/LoginPage.dart';
+import 'Screens/Account/MyHomePage.dart';
 
-Future<void> main() async {
+void main() async {
+  final flutterI18nDelegate = FlutterI18nDelegate(
+    translationLoader: FileTranslationLoader(
+      useCountryCode: false,
+      fallbackFile: 'ar',
+      basePath: 'assets/translations',
+      decodeStrategies: [JsonDecodeStrategy()],
+    ),
+  );
+  await flutterI18nDelegate.load(Locale('ar'));
 
-  // Initialize the database factory
-  //sqfliteFfiInit();
-
-  // Set the database factory
-  //databaseFactory = databaseFactoryFfi;
-
-  runApp(ShoppingApp());
+  runApp(MyApp(flutterI18nDelegate));
 }
 
-class ShoppingApp extends StatelessWidget{
+class MyApp extends StatelessWidget {
+  final FlutterI18nDelegate flutterI18nDelegate;
+
+  MyApp(this.flutterI18nDelegate);
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-
     return MaterialApp(
-      title: 'Shopping App',
-      theme: ThemeData(
-        primaryColor: Colors.blue,
-      ),
-      home: LoginPage(),
+      title: 'Internationalization Example',
+      localizationsDelegates: [
+        flutterI18nDelegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en'),
+        const Locale('ar'),
+      ],
+      home: MyHomePage(flutterI18nDelegate),
     );
   }
-
 }

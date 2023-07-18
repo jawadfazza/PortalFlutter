@@ -1,0 +1,10 @@
+{
+  "appTitle": "Language Switching Example",
+  "hello": "Hello!",
+  "registrationForm": "Registration Form",
+  "fullName": "Full Name",
+  "email": "Email",
+  "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "register": "Register New Account"
+}

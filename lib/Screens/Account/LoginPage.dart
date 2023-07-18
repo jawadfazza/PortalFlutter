@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shopping/Screens/ProductListingScreen.dart';
+import '../../Lan/AppLocalizations.dart';
+import 'RegistrationPage.dart';
+
 
 class LoginPage extends StatefulWidget {
   @override
@@ -124,7 +127,13 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
 
+                    TextButton(
+                        onPressed:() {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => RegistrationPage()));
+                        },
+                       child: Text(AppLocalizations.of(context)!.hello))
                   ],
+
                 ),
               ),
             ),
