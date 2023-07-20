@@ -4,6 +4,7 @@ import 'package:flutter_i18n/loaders/decoders/json_decode_strategy.dart';
 import 'package:flutter_i18n/loaders/file_translation_loader.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shopping/Screens/Account/RegistrationPage.dart';
 
 import 'Screens/Account/MyHomePage.dart';
 
@@ -11,12 +12,12 @@ void main() async {
   final flutterI18nDelegate = FlutterI18nDelegate(
     translationLoader: FileTranslationLoader(
       useCountryCode: false,
-      fallbackFile: 'ar',
+      fallbackFile: 'en',
       basePath: 'assets/translations',
       decodeStrategies: [JsonDecodeStrategy()],
     ),
   );
-  await flutterI18nDelegate.load(Locale('ar'));
+  await flutterI18nDelegate.load(Locale('en'));
 
   runApp(MyApp(flutterI18nDelegate));
 }
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
         const Locale('en'),
         const Locale('ar'),
       ],
-      home: MyHomePage(flutterI18nDelegate),
+      home: RegistrationPage(flutterI18nDelegate),
     );
   }
 }

@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n_delegate.dart';
 import 'package:shopping/Screens/ProductListingScreen.dart';
-import '../../Lan/AppLocalizations.dart';
 import 'RegistrationPage.dart';
 
 
 class LoginPage extends StatefulWidget {
+  late final FlutterI18nDelegate flutterI18nDelegate;
+  LoginPage(this.flutterI18nDelegate);
+
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _LoginPageState createState() => _LoginPageState(flutterI18nDelegate);
 }
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+
+  final FlutterI18nDelegate flutterI18nDelegate;
+
+  _LoginPageState(this.flutterI18nDelegate);
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
@@ -129,11 +136,10 @@ class _LoginPageState extends State<LoginPage> {
 
                     TextButton(
                         onPressed:() {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => RegistrationPage()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => RegistrationPage(flutterI18nDelegate)));
                         },
-                       child: Text(AppLocalizations.of(context)!.hello))
+                       child: Text("hello"))
                   ],
-
                 ),
               ),
             ),
