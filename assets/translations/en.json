@@ -7,18 +7,23 @@
   "email": "Email",
   "password": "Password",
   "confirmPassword": "Confirm Password",
+  "phone": "Phone Number",
   "submit": "Submit",
-
+  "RegisterAccount": "Register Account",
+  "LoginAccount": "Login Account",
+  "LoginForm": "Login One Click Shopping",
 
   "__ValidationRESX": "Validation Resourse",
   "invalidFullName": "Please enter your Full Name",
   "invalidEmail": "Please enter your email",
-  "InvalidEmailFormate": "Please enter a valid email address",
+  "invalidEmailFormate": "Please enter a valid email address",
   "invalidPassword": "Please enter your Password",
   "passwordLengthError": "Password must be at least 8 characters long",
   "passwordUppercaseError": "Password must contain at least one uppercase letter",
   "passwordLowercaseError": "Password must contain at least one lowercase letter",
   "passwordDigitError": "Password must contain at least one digit",
   "passwordMatchError": "Passwords do not match",
-  "passwordConfirmed": "Please enter your confirmed Password"
+  "passwordConfirmed": "Please enter your confirmed Password",
+  "invalidPhone": "Please enter your phone number",
+  "invalidPhoneFormate":"Please enter a valid phone number"
 }

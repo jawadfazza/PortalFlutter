@@ -37,6 +37,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  mailer: ^5.1.0
+
 
 
   # The following adds the Cupertino Icons font to your application.
