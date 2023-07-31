@@ -4,9 +4,10 @@ import 'package:flutter_i18n/loaders/decoders/json_decode_strategy.dart';
 import 'package:flutter_i18n/loaders/file_translation_loader.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:shopping/Screens/Account/RegistrationPage.dart';
+import 'package:shopping/Shop/Product/ProductListingScreen.dart';
 
-import 'Screens/Account/MyHomePage.dart';
+import 'Account/LoginPage.dart';
+
 
 void main() async {
   final flutterI18nDelegate = FlutterI18nDelegate(
@@ -18,7 +19,12 @@ void main() async {
     ),
   );
   await flutterI18nDelegate.load(Locale('en'));
+  FlutterError.onError = (FlutterErrorDetails details) {
+    // Handle the error here (e.g., log or report to a crash reporting service)
+    print('Global Error: ${details.exception}');
 
+
+  };
   runApp(MyApp(flutterI18nDelegate));
 }
 
@@ -40,7 +46,7 @@ class MyApp extends StatelessWidget {
         const Locale('en'),
         const Locale('ar'),
       ],
-      home: RegistrationPage(flutterI18nDelegate),
+      home: ProductListScreen(flutterI18nDelegate),
     );
   }
 }

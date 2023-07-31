@@ -4,10 +4,11 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 class FormButton extends StatelessWidget {
   final bool isSubmitting;
   final Function() onPressed;
-
+  final String titleValue;
   FormButton({
     required this.isSubmitting,
     required this.onPressed,
+    required this.titleValue
   });
 
   @override
@@ -21,7 +22,7 @@ class FormButton extends StatelessWidget {
         child: CircularProgressIndicator(),
       )
           : Icon(Icons.person),
-      label: Text(FlutterI18n.translate(context, "submit")),
+      label: Text(titleValue),
       style: ElevatedButton.styleFrom(
         minimumSize: Size(double.infinity, 48.0),
       ),

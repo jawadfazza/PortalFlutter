@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shopping/Models/Product.dart';
+import 'package:shopping/Shop/Models/Product.dart';
 
 class ShoppingCart extends StatefulWidget {
   static List<Product> _items = [];
 
-  static void addProduct(Product product) {
+  static void addProduct(Product product,int quantity) {
     _items.add(product);
   }
 
@@ -66,8 +66,8 @@ class _ShoppingCartState  extends State<ShoppingCart>{
       body: ListView.builder(itemBuilder: (context, index) {
       final product=carttiems[index];
       return ListTile(
-        title: Text(product.Name),
-        subtitle: Text(product.Description),
+        title: Text(product.name),
+        subtitle: Text(product.description),
         trailing: IconButton (
           icon: Icon(Icons.delete),
           onPressed: () {
