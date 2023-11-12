@@ -10,6 +10,7 @@ class Product {
   String imageURL;
   int price;
   int productQuantity;
+  int cartQuantity;
   bool productAvailability;
   double productRating;
   String productReviews;
@@ -29,6 +30,7 @@ class Product {
     required this.imageURL,
     required this.price,
     required this.productQuantity,
+    required this.cartQuantity,
     required this.productAvailability,
     required this.productRating,
     required this.productReviews,
@@ -53,6 +55,7 @@ class Product {
       imageURL: json['imageURL'],
       price: json['price'],
       productQuantity: json['productQuantity'],
+      cartQuantity: 1,
       productAvailability: json['productAvailability'],
       productRating: json['productRating'],
       productReviews: json['productReviews'],
@@ -78,6 +81,7 @@ class Product {
       'ImageURL': imageURL,
       'Price': price,
       'ProductQuantity': productQuantity,
+      'cartQuantity': cartQuantity,
       'ProductAvailability': productAvailability,
       'ProductRating': productRating,
       'ProductReviews': productReviews,

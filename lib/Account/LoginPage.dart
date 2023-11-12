@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:shopping/Account/RegistrationPage.dart';
 import '../../GlobalTools/FormButton.dart';
 import '../../GlobalTools/LanguageButtons.dart';
-import '../Shop/Product/ProductListingScreen.dart';
+import '../Shop/Products/ProductList.dart';
 
 
 
@@ -130,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
           //   // Add other account data if needed
           // );
           print(response.body);
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ProductListScreen(flutterI18nDelegate)));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ProductList(flutterI18nDelegate)));
 
         } else {
           // Request failed, handle the error

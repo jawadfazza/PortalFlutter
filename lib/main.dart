@@ -4,7 +4,7 @@ import 'package:flutter_i18n/loaders/decoders/json_decode_strategy.dart';
 import 'package:flutter_i18n/loaders/file_translation_loader.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:shopping/Shop/Product/ProductListingScreen.dart';
+import 'package:shopping/Shop/Products/ProductList.dart';
 
 import 'Account/LoginPage.dart';
 
@@ -25,20 +25,26 @@ void main() async {
 
 
   };
-  runApp(MyApp(flutterI18nDelegate));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final FlutterI18nDelegate flutterI18nDelegate;
-
-  MyApp(this.flutterI18nDelegate);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Internationalization Example',
+      title: 'Shopping App',
+      theme: ThemeData(
+        primaryColor: Colors.purpleAccent, // Set the primary color here
+      ),
+      locale: Locale('en'), // Set the default locale to 'en'
       localizationsDelegates: [
-        flutterI18nDelegate,
+        FlutterI18nDelegate(
+          translationLoader: FileTranslationLoader(
+            useCountryCode: false,
+            fallbackFile: 'en', // Default language fallback to 'en'
+            basePath: 'assets/i18n',
+          ),
+        ),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
@@ -46,7 +52,17 @@ class MyApp extends StatelessWidget {
         const Locale('en'),
         const Locale('ar'),
       ],
-      home: ProductListScreen(flutterI18nDelegate),
+      localeResolutionCallback: (locale, supportedLocales) {
+        // Check if the provided locale is supported
+        for (var supportedLocale in supportedLocales) {
+          if (supportedLocale.languageCode == locale?.languageCode) {
+            return supportedLocale;
+          }
+        }
+        // If not supported, return the default locale
+        return supportedLocales.first;
+      },
+      home: ProductList(FlutterI18nDelegate()),
     );
   }
 }
