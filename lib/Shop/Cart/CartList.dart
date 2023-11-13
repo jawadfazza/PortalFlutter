@@ -46,7 +46,6 @@ class ShoppingCart extends StatefulWidget {
     } catch (e) {
       // Handle the case when no matching element is found
     }
-
   }
 
   static void _decreaseQuantity(String rowKey) {
@@ -66,7 +65,6 @@ class ShoppingCart extends StatefulWidget {
 }
 
 class _ShoppingCartState extends State<ShoppingCart> {
-
   double calculateTotalCost(List<Product> cartItems) {
     double totalCost = 0;
     for (var item in cartItems) {
@@ -88,21 +86,23 @@ class _ShoppingCartState extends State<ShoppingCart> {
       ShoppingCart.removeProduct(product);
     });
   }
+
   void confirmFunction() {
     setState(() {
       ShoppingCart.clearCart();
-    }); // Just call clearCart directly
+    });
   }
 
-  void increaseQuantity(String rowKey){
+  void increaseQuantity(String rowKey) {
     setState(() {
       ShoppingCart._increaseQuantity(rowKey);
-    });;
+    });
   }
-  void decreaseQuantity(String rowKey){
+
+  void decreaseQuantity(String rowKey) {
     setState(() {
       ShoppingCart._decreaseQuantity(rowKey);
-    });;
+    });
   }
 
   @override
@@ -110,6 +110,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
     final cartItems = ShoppingCart.getItems();
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blue, // Set your desired background color
         title: Text(
           'Shopping Cart',
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -188,8 +189,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
           )
         ],
       ),
-
     );
   }
-
 }
