@@ -18,16 +18,17 @@ class CartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Create a NumberFormat instance for currency formatting
+    // NumberFormat instance for currency formatting
     NumberFormat currencyFormat = NumberFormat.currency(
-      symbol: '\$',  // Currency symbol
-      decimalDigits: 2,  // Number of decimal places
+      symbol: '\$', // Currency symbol
+      decimalDigits: 2, // Number of decimal places
     );
+
     return Card(
       elevation: 3.0,
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 100,
@@ -47,12 +48,18 @@ class CartCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      product.name,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                    // Displaying product name with maximum 2 lines and ellipsis if overflow
+                    Expanded(
+                      child: Text(
+                        product.name,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16.0),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    Spacer(),
                     IconButton(
                       alignment: Alignment.topCenter,
                       icon: Icon(Icons.delete, size: 24.0),
@@ -62,31 +69,29 @@ class CartCard extends StatelessWidget {
                     ),
                   ],
                 ),
-
-                Text(
-                  '${product.description.substring(0, (product.description.length < 40 ? product.description.length : 40))}',
-                  style: TextStyle(fontSize: 12.0, color: Colors.grey[600]),
-                ),
-
+                SizedBox(height: 4),
                 Row(
                   children: [
+                    // Displaying product price with currency formatting
                     Text(
                       '${currencyFormat.format(product.price)}',
                       style: TextStyle(fontSize: 14.0, color: Colors.blue),
                     ),
                     Spacer(),
+                    // Buttons to increase or decrease quantity
                     IconButton(
                       icon: Icon(Icons.remove),
                       onPressed: () {
                         decreaseQuantity(product.rowKey);
                       },
                     ),
-                    SizedBox(width: 4), // Adjust the spacing
+                    SizedBox(width: 4),
+                    // Displaying the quantity of the product in the cart
                     Text(
                       'Qty: ${product.cartQuantity}',
                       style: TextStyle(fontSize: 12.0, color: Colors.green),
                     ),
-                    SizedBox(width: 4), // Adjust the spacing
+                    SizedBox(width: 4),
                     IconButton(
                       icon: Icon(Icons.add),
                       onPressed: () {
@@ -101,6 +106,5 @@ class CartCard extends StatelessWidget {
         ],
       ),
     );
-
   }
 }
