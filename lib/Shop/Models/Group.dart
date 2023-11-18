@@ -36,14 +36,14 @@ class Group {
   // Create Group object from JSON
   factory Group.fromJson(Map<String, dynamic> json) {
     return Group(
-      partitionKey: json['partitionKey'],
-      rowKey: json['rowKey'],
-      seq: json['seq'],
-      name: json['name'],
-      description: json['description'],
-      languageID: json['languageID'],
-      imageURL: json['imageURL'],
-      active: json['active'],
+      partitionKey: json['partitionKey'] ?? '',
+      rowKey: json['rowKey']?? '',
+      seq: json['seq']??0,
+      name: json['name']?? '',
+      description: json['description']?? '',
+      languageID: json['languageID']?? '',
+      imageURL: json['imageURL']?? '',
+      active: json['active']?? false,
     );
   }
 
