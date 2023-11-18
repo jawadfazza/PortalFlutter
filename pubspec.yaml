@@ -29,15 +29,14 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  flutter_i18n: any
-  http: ^0.13.3
-  uuid: ^3.0.4
-  flutter:
-    sdk: flutter
   flutter_localizations:
     sdk: flutter
+  flutter_i18n: any
+  http: any
+  uuid: any
   intl: any
-  mailer: ^5.1.0
+  mailer: any
+
 
 
 
