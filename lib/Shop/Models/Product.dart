@@ -47,28 +47,29 @@ class Product {
   // Factory method to create a Product instance from a JSON map
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      partitionKey: json['partitionKey'],
-      rowKey: json['rowKey'],
-      groupRowKey: json['groupRowKey'],
-      storeRowKey: json['storeRowKey'],
-      seq: json['seq'],
-      imageURL: json['imageURL'],
-      price: json['price'],
-      productQuantity: json['productQuantity'],
+      partitionKey: json['partitionKey'] ?? '',
+      rowKey: json['rowKey'] ?? '',
+      groupRowKey: json['groupRowKey'] ?? '',
+      storeRowKey: json['storeRowKey'] ?? '',
+      seq: json['seq'] ?? 0,
+      imageURL: json['imageURL'] ?? '',
+      price: json['price'] != null ? int.parse(json['price'].toString()) : 0,
+      productQuantity: json['productQuantity'] ?? 0,
       cartQuantity: 1,
-      productAvailability: json['productAvailability'],
-      productRating: json['productRating'],
-      productReviews: json['productReviews'],
-      productSpecifications: json['productSpecifications'],
-      productBrand: json['productBrand'],
-      productWeight: json['productWeight'],
-      productDimensions: json['productDimensions'],
-      active: json['active'],
-      name: json['name'],
-      description: json['description'],
-      languageID: json['languageID'],
+      productAvailability: json['productAvailability'] ?? '',
+      productRating: json['productRating'] ?? 0.0,
+      productReviews: json['productReviews'] ?? '',
+      productSpecifications: json['productSpecifications'] ?? '',
+      productBrand: json['productBrand'] ?? '',
+      productWeight: json['productWeight'] != null ? double.parse(json['productWeight'].toString()) : 0.0,
+      productDimensions: json['productDimensions'] ?? '',
+      active: json['active'] ?? false,
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      languageID: json['languageID'] ?? '',
     );
   }
+
 
   // Method to convert a Product instance to a JSON map
   Map<String, dynamic> toJson() {
