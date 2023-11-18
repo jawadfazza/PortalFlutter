@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_i18n/flutter_i18n_delegate.dart';
 import 'package:shopping/GlobalTools/LanguageButtons.dart';
 import 'package:shopping/Shop/Cart/CartList.dart';
 import 'package:http/http.dart' as http;
@@ -10,8 +9,6 @@ import 'package:shopping/Shop/Models/Product.dart';
 import 'package:shopping/Shop/Models/SubGroup.dart';
 import 'package:shopping/Shop/Products/_ProductCard.dart';
 import 'package:shopping/Shop/Products/ProductDetails.dart';
-
-import '../../GlobalTools/AlertMessage.dart';
 import '../../GlobalTools/ErrorScreen.dart';
 import '../Groups/FilterOption.dart';
 import '../../GlobalTools/ListNoResultFound.dart';
@@ -21,11 +18,13 @@ import '../Cart/_CartShopIcon.dart';
 
 
 
+
 class ProductList extends StatefulWidget {
   final FlutterI18nDelegate flutterI18nDelegate;
 
-  ProductList(this.flutterI18nDelegate);
+  const ProductList(this.flutterI18nDelegate);
   @override
+  // ignore: library_private_types_in_public_api
   _ProductListState createState() =>
       _ProductListState();
 }
@@ -33,8 +32,9 @@ class ProductList extends StatefulWidget {
 class _ProductListState extends State<ProductList> {
 
 
+
   String languageCode = "";
-  Locale _currentLocale = Locale("en");
+  Locale _currentLocale = const Locale("en");
 
   static List<Product> products = [];
   List<Product> filteredProducts = [];
@@ -51,11 +51,15 @@ class _ProductListState extends State<ProductList> {
   bool _isAddingToCart = false;
   String _ProductRowKey = '';
   int layoutNumber=2;
-  String selectedGroup='All'; // No default selected group // Default selected group filter
+  String selectedGroup='-'; // No default selected group // Default selected group filter
   static List<Group> groupOptions=[] ; // List of grouping options
-  String selectedSubGroup='All'; // No default selected group // Default selected group filter
+  String selectedSubGroup='-'; // No default selected group // Default selected group filter
   static List<SubGroup> subGroupOptions=[] ;
   static List<SubGroup> filteredSubGroupOptions=[] ;
+  final TextEditingController _searchController = TextEditingController();
+
+
+
 
 
   @override
@@ -63,16 +67,19 @@ class _ProductListState extends State<ProductList> {
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    groupOptions.add(new Group(partitionKey: '', rowKey: '', seq: 1, name: 'All', description: '', languageID: languageCode, imageURL: '', active: true));
+    groupOptions.add(Group(partitionKey: '', rowKey: '', seq: 1, name: '-', description: '', languageID: languageCode, imageURL: '', active: true));
     fetchDataGroups();
-    filteredSubGroupOptions.add(new SubGroup(partitionKey: '', rowKey: '', seq: 1, name: 'All', languageID: languageCode, imageURL: '', active: true,groupRowKey: ''));
+    filteredSubGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: languageCode, imageURL: '', active: true,groupRowKey: ''));
+    subGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: languageCode, imageURL: '', active: true,groupRowKey: ''));
     fetchDataSubGroups();
 
     fetchData();
   }
 
+
   @override
   void dispose() {
+    _searchController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -90,6 +97,7 @@ class _ProductListState extends State<ProductList> {
       });
       try {
         var groupRowKey = groupOptions.firstWhere((element) => element.name==selectedGroup).rowKey;
+        var subGroupRowKey = subGroupOptions.firstWhere((element) => element.name==selectedSubGroup).rowKey;
         var url =
             'https://portalapps.azurewebsites.net/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=$languageCode&groupOptions=$groupRowKey';
         if (searchQuery != "") {
@@ -103,8 +111,6 @@ class _ProductListState extends State<ProductList> {
           final List<dynamic> jsonList = jsonResponse as List<dynamic>;
           final List<Product> newProducts =
           jsonList.map((json) => Product.fromJson(json)).toList();
-
-          print(newProducts);
           setState(() {
             products.addAll(newProducts);
             isLoading = false;
@@ -137,7 +143,7 @@ class _ProductListState extends State<ProductList> {
         pageNumber += 1;
       });
 
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 2));
 
       try {
         var groupRowKey = groupOptions.firstWhere((element) => element.name==selectedGroup).rowKey;
@@ -191,6 +197,9 @@ class _ProductListState extends State<ProductList> {
     setState(() {
       _currentLocale = newLocale;
       FlutterI18n.refresh(context, newLocale);
+      fetchDataGroups();
+      fetchDataSubGroups();
+      fetchData();
 
     });
   }
@@ -202,7 +211,7 @@ class _ProductListState extends State<ProductList> {
     });
 
     // Simulate a delay to show the progress indicator
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         var cartItem= ShoppingCart.getItems().where((element) => element.rowKey==_ProductRowKey);
         if(cartItem.length==0){
@@ -272,9 +281,11 @@ class _ProductListState extends State<ProductList> {
           final List<dynamic> jsonList = jsonResponse as List<dynamic>;
           final List<Group> newGroups =
           jsonList.map((json) => Group.fromJson(json)).toList();
-          print(newGroups);
+          //print(newGroups);
           setState(() {
 
+            groupOptions.clear();
+            groupOptions.add(Group(partitionKey: '', rowKey: '', seq: 1, name: '-', description: '', languageID: languageCode, imageURL: '', active: true));
             groupOptions.addAll(newGroups);
 
           });
@@ -295,9 +306,16 @@ class _ProductListState extends State<ProductList> {
         final List<dynamic> jsonList = jsonResponse as List<dynamic>;
         final List<SubGroup> newSubGroups =
         jsonList.map((json) => SubGroup.fromJson(json)).toList();
-        print(newSubGroups);
+        newSubGroups.sort((a, b) => a.name.compareTo(b.name));
+
+        //print(newSubGroups.);
         setState(() {
+          subGroupOptions.clear();
+          subGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: languageCode, imageURL: '', active: true,groupRowKey: ''));
           subGroupOptions.addAll(newSubGroups);
+
+          filteredSubGroupOptions.clear();
+          filteredSubGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: languageCode, imageURL: '', active: true,groupRowKey: ''));
           filteredSubGroupOptions.addAll(newSubGroups);
         });
       }
@@ -331,7 +349,6 @@ class _ProductListState extends State<ProductList> {
       ),
     );
   }
-
   Widget _buildSubGroups() {
     return Container(
       height: 30, // Adjust the height as needed
@@ -361,19 +378,17 @@ class _ProductListState extends State<ProductList> {
     setState(() {
 
       selectedGroup=group;
-      filteredSubGroupOptions=group=='All'?subGroupOptions:
+      filteredSubGroupOptions=group=='-'?subGroupOptions:
       subGroupOptions.where((element) => element.groupRowKey==rowKey).toList();
       fetchData();
     });
   }
   void applySubGroupFilter(String subGroup) {
     setState(() {
-
       selectedSubGroup=subGroup;
-
-      fetchData();
     });
   }
+
   // Add this method to your _ProductListState class
   Widget _buildListItem(BuildContext context, int index) {
     if (index == products.length) {
@@ -387,7 +402,7 @@ class _ProductListState extends State<ProductList> {
       if(searchQuery!=""&&products.length==0){
         return  ListNoResultFound();
       }
-      return SizedBox();
+      return const SizedBox();
     }
    else {
       final product = products[index];
@@ -415,41 +430,55 @@ class _ProductListState extends State<ProductList> {
     }
   }
 
+  void _clearSearch() {
+    setState(() {
+      _searchController.clear();
+      searchQuery = ''; // Clear the searchQuery variable
+      // Add other necessary operations related to clearing the search here
+      pageSize = 20;
+      pageNumber += 1;
+      products.clear();
+      fetchData();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-
     if (languageCode == "") {
-      languageCode = ModalRoute.of(context)?.settings.arguments as String;
+      languageCode = ModalRoute
+          .of(context)
+          ?.settings
+          .arguments as String;
       _changeLanguage(Locale(languageCode));
-
     }
     // Determine the text direction based on the current locale
     TextDirection textDirection =
     _currentLocale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
 
-    return  Directionality(
+    return Directionality(
       textDirection: textDirection,
+
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Product List'),
+          title: const Text('Product List'),
           actions: [
             CartShopIcon(),
-            IconButton(onPressed:() {
-             setState(() {
-               layoutNumber=( layoutNumber==2?1:2);
-             });
-            }, icon: Icon(layoutNumber==2?Icons.view_list:Icons.list_alt))
+            IconButton(onPressed: () {
+              setState(() {
+                layoutNumber = (layoutNumber == 2 ? 1 : 2);
+              });
+            }, icon: Icon(layoutNumber == 2 ? Icons.view_list : Icons.list_alt))
           ],
         ),
         body: Column(
           children: [
-
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
+                controller: _searchController,
                 onSubmitted: (value) {
                   setState(() {
-                    searchQuery = value;
+                    searchQuery = value.trim();
                     pageSize = 20;
                     pageNumber += 1;
                     products.clear();
@@ -457,15 +486,32 @@ class _ProductListState extends State<ProductList> {
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: 'Search',
-                  prefixIcon: Icon(Icons.search),
+                  hintText: FlutterI18n.translate(context, "Search") ,
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: _clearSearch,
+                  )
+                      : null,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: const BorderSide(color: Colors.grey),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 12.0, horizontal: 16.0),
                 ),
+                style: const TextStyle(fontSize: 16.0),
               ),
             ),
+            const SizedBox(height: 10),
             _buildGroups(),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             _buildSubGroups(),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
+
             Expanded(
               child: hasError ? ErrorScreen(errorMessage: errorMessage,
                 onRetry: () {
@@ -479,15 +525,15 @@ class _ProductListState extends State<ProductList> {
               ) : RefreshIndicator(
 
                 onRefresh: fetchData,
-                    child: ListView.builder(
+                child: ListView.builder(
 
-                    controller: _scrollController,
-                      itemCount: products.length + 1,
-                      itemBuilder: (context, index) {
-                      return _buildListItem(context, index);
-                      },
+                  controller: _scrollController,
+                  itemCount: products.length + 1,
+                  itemBuilder: (context, index) {
+                    return _buildListItem(context, index);
+                  },
+                ),
               ),
-                  ),
             ),
           ],
         ),
@@ -503,11 +549,11 @@ class _ProductListState extends State<ProductList> {
               // Scroll to the top of the list using the ScrollController
               _scrollController.animateTo(
                 0.0,
-                duration: Duration(milliseconds: 500),
+                duration: const Duration(milliseconds: 500),
                 curve: Curves.easeInOut,
               );
             },
-            child: Icon(Icons.arrow_upward),
+            child: const Icon(Icons.arrow_upward),
           ),
         ),
 

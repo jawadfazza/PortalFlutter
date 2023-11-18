@@ -20,13 +20,13 @@ class LanguageButtons extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextButton(
-              onPressed: () => changeLanguage(Locale('en')),
-              child: Text('English'),
+              onPressed: () => changeLanguage(const Locale('en')),
+              child: const Text('English'),
             ),
-            SizedBox(width: 16.0),
+            const SizedBox(width: 16.0),
             TextButton(
-              onPressed: () => changeLanguage(Locale('ar')),
-              child: Text('العربية'),
+              onPressed: () => changeLanguage(const Locale('ar')),
+              child: const Text('العربية'),
             ),
           ],
         ),

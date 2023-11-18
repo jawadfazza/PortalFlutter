@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_i18n/flutter_i18n_delegate.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:shopping/Account/RegistrationPage.dart';
@@ -29,11 +28,10 @@ class _LoginPageState extends State<LoginPage> {
   bool _isSubmitting = false; // Flag to track form submission status
 
 
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _fullnameController=TextEditingController();
-  TextEditingController _phoneController=TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController=TextEditingController();
 
 
   String? _validatePassword(String? value) {
@@ -96,7 +94,6 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       String Email = _emailController.text;
-      String Password = _passwordController.text;
 
       var url = 'https://portalapps.azurewebsites.net/api/Accounts/Login';
 
@@ -174,9 +171,9 @@ class _LoginPageState extends State<LoginPage> {
       ],
 
 
-      supportedLocales: [
-        const Locale('en'),
-        const Locale('ar'),
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ar'),
       ],
       locale: _currentLocale,
       home: Scaffold(
@@ -187,24 +184,24 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: Form(
               key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   TextFormField(
                     //initialValue: "e.jawadfazza@gmail.com",
                     controller: _emailController,
                     validator: (value) => _validateEmail(value),
                     decoration: InputDecoration(
                       labelText: FlutterI18n.translate(context, "email"),
-                      prefixIcon: Icon(Icons.email),
+                      prefixIcon: const Icon(Icons.email),
                       enabled: !_isSubmitting,
                     ),
                   ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
 
                   TextFormField(
                     //initialValue: "Apps@SYRDA12345",
@@ -213,15 +210,15 @@ class _LoginPageState extends State<LoginPage> {
 
                     decoration: InputDecoration(
                       labelText: FlutterI18n.translate(context, "password"),
-                      prefixIcon: Icon(Icons.lock),
+                      prefixIcon: const Icon(Icons.lock),
                     ),
                     obscureText: true,
                     enabled:! _isSubmitting,
                   ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
 
                   FormButton(isSubmitting: _isSubmitting, onPressed: _submitForm,titleValue: FlutterI18n.translate(context, "LoginAccount")),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   TextButton(
                       onPressed:() {
                         Navigator.push(context, MaterialPageRoute(builder: (context) =>

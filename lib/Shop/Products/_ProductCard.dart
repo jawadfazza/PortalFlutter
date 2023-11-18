@@ -33,7 +33,7 @@ class ProductCard extends StatelessWidget {
       onTap: onTap,
       child:layoutNumber==1? Card(
         elevation: 3,
-        margin: EdgeInsets.all(5),
+        margin: const EdgeInsets.all(5),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -64,7 +64,7 @@ class ProductCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           product.name,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
@@ -73,13 +73,13 @@ class ProductCard extends StatelessWidget {
                       IconButton(
                         onPressed: addToCart,
                         icon: showProgressIndicator && product.rowKey == rowKey
-                            ? CircularProgressIndicator()
-                            : Icon(Icons.add_shopping_cart),
+                            ? const CircularProgressIndicator()
+                            : const Icon(Icons.add_shopping_cart),
                         color: Colors.green,
                       ),
                     ],
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     product.description,
                     maxLines: 2,
@@ -88,13 +88,13 @@ class ProductCard extends StatelessWidget {
                       color: Colors.grey[600],
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         'Price: ${currencyFormat.format(product.price)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                           color: Colors.blue,
@@ -103,20 +103,20 @@ class ProductCard extends StatelessWidget {
                       Row(
                         children: [
                           IconButton(
-                            icon: Icon(Icons.remove_circle_outline),
+                            icon: const Icon(Icons.remove_circle_outline),
                             onPressed: () {
                               decreaseQuantity(product.rowKey);
                             },
                           ),
                           Text(
                             '${product.cartQuantity}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
                           IconButton(
-                            icon: Icon(Icons.add_circle_outline),
+                            icon: const Icon(Icons.add_circle_outline),
                             onPressed: () {
                               increaseQuantity(product.rowKey);
                             },
@@ -143,7 +143,7 @@ class ProductCard extends StatelessWidget {
               width: 100,
               height: 150,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10),
                   bottomLeft: Radius.circular(10),
                 ),
@@ -153,7 +153,7 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,12 +161,12 @@ class ProductCard extends StatelessWidget {
                 children: [
                   Text(
                     product.name,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     product.description,
                     maxLines: 2,
@@ -175,13 +175,13 @@ class ProductCard extends StatelessWidget {
                       color: Colors.grey[600],
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         '\$${product.price.toStringAsFixed(2)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                           color: Colors.blue,
@@ -190,20 +190,20 @@ class ProductCard extends StatelessWidget {
                       Row(
                         children: [
                           IconButton(
-                            icon: Icon(Icons.remove),
+                            icon: const Icon(Icons.remove),
                             onPressed: () {
                               decreaseQuantity(product.rowKey);
                             },
                           ),
                           Text(
                             '${product.cartQuantity}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
                           IconButton(
-                            icon: Icon(Icons.add),
+                            icon: const Icon(Icons.add),
                             onPressed: () {
                               increaseQuantity(product.rowKey);
                             },
@@ -215,12 +215,12 @@ class ProductCard extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             IconButton(
               onPressed: addToCart,
               icon: showProgressIndicator && product.rowKey == rowKey
-                  ? CircularProgressIndicator()
-                  : Icon(Icons.add_shopping_cart),
+                  ? const CircularProgressIndicator()
+                  : const Icon(Icons.add_shopping_cart),
               color: Colors.green,
             ),
           ],

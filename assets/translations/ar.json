@@ -19,6 +19,8 @@
   "passwordLowercaseError": "يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل",
   "passwordDigitError": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
   "passwordMatchError": "كلمات المرور غير متطابقة",
-  "passwordConfirmed": "يرجى إدخال كلمة المرور المؤكدة"
+  "passwordConfirmed": "يرجى إدخال كلمة المرور المؤكدة",
+  "Search": "بحث"
+
 }
 

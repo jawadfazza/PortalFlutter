@@ -36,6 +36,7 @@ dependencies:
   uuid: any
   intl: any
   mailer: any
+  easy_debounce: ^2.0.3
 
 
 

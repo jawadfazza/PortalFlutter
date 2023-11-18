@@ -193,9 +193,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: [
-        const Locale('en'),
-        const Locale('ar'),
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ar'),
       ],
       locale:  _currentLocale,
       home: Scaffold(

@@ -18,7 +18,7 @@ void main() async {
       decodeStrategies: [JsonDecodeStrategy()],
     ),
   );
-  await flutterI18nDelegate.load(Locale('en'));
+  await flutterI18nDelegate.load(const Locale('en'));
   FlutterError.onError = (FlutterErrorDetails details) {
     // Handle the error here (e.g., log or report to a crash reporting service)
     print('Global Error: ${details.exception}');
@@ -29,6 +29,8 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -36,7 +38,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.purpleAccent, // Set the primary color here
       ),
-      locale: Locale('en'), // Set the default locale to 'en'
+      locale: const Locale('en'), // Set the default locale to 'en'
       localizationsDelegates: [
         FlutterI18nDelegate(
           translationLoader: FileTranslationLoader(
@@ -48,9 +50,9 @@ class MyApp extends StatelessWidget {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: [
-        const Locale('en'),
-        const Locale('ar'),
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ar'),
       ],
       localeResolutionCallback: (locale, supportedLocales) {
         // Check if the provided locale is supported
@@ -62,7 +64,7 @@ class MyApp extends StatelessWidget {
         // If not supported, return the default locale
         return supportedLocales.first;
       },
-      home: ProductList(FlutterI18nDelegate()),
+      home: LoginPage(FlutterI18nDelegate()),
     );
   }
 }

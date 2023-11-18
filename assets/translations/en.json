@@ -25,5 +25,6 @@
   "passwordMatchError": "Passwords do not match",
   "passwordConfirmed": "Please enter your confirmed Password",
   "invalidPhone": "Please enter your phone number",
-  "invalidPhoneFormate":"Please enter a valid phone number"
+  "invalidPhoneFormate":"Please enter a valid phone number",
+  "Search": "Search"
 }
