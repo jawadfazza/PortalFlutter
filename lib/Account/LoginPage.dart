@@ -172,6 +172,8 @@ class _LoginPageState extends State<LoginPage> {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
+
+
       supportedLocales: [
         const Locale('en'),
         const Locale('ar'),
