@@ -27,6 +27,9 @@ class SubGroup {
       'groupRowKey': groupRowKey,
       'seq': seq,
       'name': name,
+
+
+
       'languageID': languageID,
       'imageURL': imageURL,
       'active': active,
@@ -36,14 +39,14 @@ class SubGroup {
   // Create Group object from JSON
   factory SubGroup.fromJson(Map<String, dynamic> json) {
     return SubGroup(
-      partitionKey: json['partitionKey'],
-      rowKey: json['rowKey'],
-      groupRowKey: json['groupRowKey'],
-      seq: json['seq'],
-      name: json['name'],
-      languageID: json['languageID'],
-      imageURL: json['imageURL'],
-      active: json['active'],
+      partitionKey: json['partitionKey']??'',
+      rowKey: json['rowKey']??'',
+      groupRowKey: json['groupRowKey']??'',
+      seq: json['seq']??0,
+      name: json['name']??'',
+      languageID: json['languageID']??'',
+      imageURL: json['imageURL']??'',
+      active: json['active']??false,
     );
   }
 
