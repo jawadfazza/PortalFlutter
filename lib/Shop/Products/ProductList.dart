@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:shopping/Account/LoginPage.dart';
 import 'package:shopping/GlobalTools/LanguageButtons.dart';
 import 'package:shopping/Shop/Cart/CartList.dart';
 import 'package:http/http.dart' as http;
@@ -26,7 +27,7 @@ class ProductList extends StatefulWidget {
   @override
   // ignore: library_private_types_in_public_api
   _ProductListState createState() =>
-      _ProductListState();
+      _ProductListState(flutterI18nDelegate);
 }
 
 class _ProductListState extends State<ProductList> {
@@ -57,6 +58,9 @@ class _ProductListState extends State<ProductList> {
   static List<SubGroup> subGroupOptions=[] ;
   static List<SubGroup> filteredSubGroupOptions=[] ;
   final TextEditingController _searchController = TextEditingController();
+
+  _ProductListState(this. flutterI18nDelegate);
+  FlutterI18nDelegate  flutterI18nDelegate ;
 
 
 
@@ -242,7 +246,7 @@ class _ProductListState extends State<ProductList> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-   void _increaseQuantity(String rowKey) {
+  void _increaseQuantity(String rowKey) {
     setState((){
       Product proFound;
       try {
@@ -255,7 +259,7 @@ class _ProductListState extends State<ProductList> {
       }
     });
   }
-   void _decreaseQuantity(String rowKey) {
+  void _decreaseQuantity(String rowKey) {
     setState((){
       Product proFound;
       try {
@@ -273,27 +277,27 @@ class _ProductListState extends State<ProductList> {
 
   Future<void> fetchDataGroups() async {
     languageCode = _currentLocale.languageCode.toUpperCase();
-      try {
-        var url = 'https://portalapps.azurewebsites.net/api/Groups/LoadAllData?Lan=$languageCode';
-        final response = await http.get(Uri.parse(url));
-        if (response.statusCode == 200) {
-          final jsonResponse = json.decode(response.body);
-          final List<dynamic> jsonList = jsonResponse as List<dynamic>;
-          final List<Group> newGroups =
-          jsonList.map((json) => Group.fromJson(json)).toList();
-          //print(newGroups);
-          setState(() {
+    try {
+      var url = 'https://portalapps.azurewebsites.net/api/Groups/LoadAllData?Lan=$languageCode';
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        final List<dynamic> jsonList = jsonResponse as List<dynamic>;
+        final List<Group> newGroups =
+        jsonList.map((json) => Group.fromJson(json)).toList();
+        //print(newGroups);
+        setState(() {
 
-            groupOptions.clear();
-            groupOptions.add(Group(partitionKey: '', rowKey: '', seq: 1, name: '-', description: '', languageID: languageCode, imageURL: '', active: true));
-            groupOptions.addAll(newGroups);
+          groupOptions.clear();
+          groupOptions.add(Group(partitionKey: '', rowKey: '', seq: 1, name: '-', description: '', languageID: languageCode, imageURL: '', active: true));
+          groupOptions.addAll(newGroups);
 
-          });
-        }
-
-      } catch (error) {
-       print(error);
+        });
       }
+
+    } catch (error) {
+      print(error);
+    }
 
   }
   Future<void> fetchDataSubGroups() async {
@@ -404,7 +408,7 @@ class _ProductListState extends State<ProductList> {
       }
       return const SizedBox();
     }
-   else {
+    else {
       final product = products[index];
       return ProductCard(
         product: product,
@@ -412,7 +416,7 @@ class _ProductListState extends State<ProductList> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ProductDetails(product: product),
+                builder: (context) => ProductDetails(product: product),
                 settings: RouteSettings(
                     arguments:
                     _currentLocale.languageCode
@@ -441,7 +445,43 @@ class _ProductListState extends State<ProductList> {
       fetchData();
     });
   }
+  bool isAuthenticated = false; // Assuming this flag manages user authentication status
 
+  // Function to handle the action when the user is not authenticated
+  void handleAuthenticationAction() {
+    // Implement the action needed when the user is not authenticated
+    // For example, show a login dialog or navigate to the authentication screen
+    // You can replace this with your actual authentication logic
+    // For demonstration purposes, let's show a simple dialog
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Authentication Required'),
+          content: Text('Please log in to perform this action.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Implement the logic to navigate to the authentication screen
+                // For example:
+                // Navigator.pushNamed(context, '/login');
+                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(flutterI18nDelegate)));
+              },
+              child: Text('OK'),
+            ),TextButton(
+              onPressed: () {
+                // Implement the logic to navigate to the authentication screen
+                // For example:
+                // Navigator.pushNamed(context, '/login');
+                Navigator.pop(context); // Close the dialog
+              },
+              child: Text('Later'),
+            ),
+          ],
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     if (languageCode == "") {
@@ -462,6 +502,13 @@ class _ProductListState extends State<ProductList> {
         appBar: AppBar(
           title: const Text('Product List'),
           actions: [
+            if (!isAuthenticated)
+              IconButton(
+                onPressed: handleAuthenticationAction,
+                icon: Icon(Icons.error),
+                color: Colors.deepOrange,
+                
+              ),
             CartShopIcon(),
             IconButton(onPressed: () {
               setState(() {

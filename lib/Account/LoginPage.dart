@@ -127,7 +127,12 @@ class _LoginPageState extends State<LoginPage> {
           //   // Add other account data if needed
           // );
           print(response.body);
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ProductList(flutterI18nDelegate)));
+          Navigator.push(context, MaterialPageRoute(builder:
+              (context) => ProductList(flutterI18nDelegate),
+              settings: RouteSettings(
+                  arguments:
+                  _currentLocale.languageCode
+              )));
 
         } else {
           // Request failed, handle the error

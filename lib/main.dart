@@ -4,6 +4,7 @@ import 'package:flutter_i18n/loaders/decoders/json_decode_strategy.dart';
 import 'package:flutter_i18n/loaders/file_translation_loader.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shopping/Shop/Models/Product.dart';
 import 'package:shopping/Shop/Products/ProductList.dart';
 
 import 'Account/LoginPage.dart';
@@ -18,53 +19,39 @@ void main() async {
       decodeStrategies: [JsonDecodeStrategy()],
     ),
   );
-  await flutterI18nDelegate.load(const Locale('en'));
+  await flutterI18nDelegate.load(Locale('en'));
   FlutterError.onError = (FlutterErrorDetails details) {
     // Handle the error here (e.g., log or report to a crash reporting service)
     print('Global Error: ${details.exception}');
 
 
   };
-  runApp(MyApp());
+  runApp(MyApp(flutterI18nDelegate));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final FlutterI18nDelegate flutterI18nDelegate;
+
+  MyApp(this.flutterI18nDelegate);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Shopping App',
       theme: ThemeData(
-        primaryColor: Colors.purpleAccent, // Set the primary color here
+        primaryColor: Colors.deepPurpleAccent, // Set the primary color here
       ),
-      locale: const Locale('en'), // Set the default locale to 'en'
       localizationsDelegates: [
-        FlutterI18nDelegate(
-          translationLoader: FileTranslationLoader(
-            useCountryCode: false,
-            fallbackFile: 'en', // Default language fallback to 'en'
-            basePath: 'assets/i18n',
-          ),
-        ),
+        flutterI18nDelegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('ar'),
+      supportedLocales: [
+        const Locale('en'),
+        const Locale('ar'),
       ],
-      localeResolutionCallback: (locale, supportedLocales) {
-        // Check if the provided locale is supported
-        for (var supportedLocale in supportedLocales) {
-          if (supportedLocale.languageCode == locale?.languageCode) {
-            return supportedLocale;
-          }
-        }
-        // If not supported, return the default locale
-        return supportedLocales.first;
-      },
-      home: LoginPage(FlutterI18nDelegate()),
+      home: ProductList(flutterI18nDelegate),
     );
   }
 }
+
