@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopping/Account/RegistrationPage.dart';
 import '../../GlobalTools/FormButton.dart';
 import '../../GlobalTools/LanguageButtons.dart';
@@ -116,6 +117,11 @@ class _LoginPageState extends State<LoginPage> {
           setState(() {
             _isSubmitting = false;
           });
+
+          // Store user information after successful login
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString('userEmail', _emailController.text);
+
           // Request successful, handle the response
           // Send confirmation email after successful Login
           _showMessage('Account Authenticated Successfully: , $Email',

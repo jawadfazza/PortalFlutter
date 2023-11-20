@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopping/Account/LoginPage.dart';
 import 'package:shopping/GlobalTools/LanguageButtons.dart';
 import 'package:shopping/Shop/Cart/CartList.dart';
@@ -23,7 +24,7 @@ import '../Cart/_CartShopIcon.dart';
 class ProductList extends StatefulWidget {
   final FlutterI18nDelegate flutterI18nDelegate;
 
-  const ProductList(this.flutterI18nDelegate);
+  const ProductList(this.flutterI18nDelegate, {super.key});
   @override
   // ignore: library_private_types_in_public_api
   _ProductListState createState() =>
@@ -45,24 +46,26 @@ class _ProductListState extends State<ProductList> {
 
   bool isLoading = false;
   bool isResultFound = false;
-  String searchQuery = '';
   bool hasError = false;
-  String errorMessage = '';
   bool _showScrollButton = false; // Add this variable
   bool _isAddingToCart = false;
-  String _ProductRowKey = '';
-  int layoutNumber=2;
+
+  String searchQuery = '';
+  String errorMessage = '';
+  late String _productRowKey = '';
   String selectedGroup='-'; // No default selected group // Default selected group filter
-  static List<Group> groupOptions=[] ; // List of grouping options
   String selectedSubGroup='-'; // No default selected group // Default selected group filter
+
+  int layoutNumber=2;
+
+  static List<Group> groupOptions=[] ; // List of grouping options
   static List<SubGroup> subGroupOptions=[] ;
   static List<SubGroup> filteredSubGroupOptions=[] ;
+
   final TextEditingController _searchController = TextEditingController();
 
-  _ProductListState(this. flutterI18nDelegate);
   FlutterI18nDelegate  flutterI18nDelegate ;
-
-
+  _ProductListState(this. flutterI18nDelegate);
 
 
 
@@ -101,7 +104,7 @@ class _ProductListState extends State<ProductList> {
       });
       try {
         var groupRowKey = groupOptions.firstWhere((element) => element.name==selectedGroup).rowKey;
-        var subGroupRowKey = subGroupOptions.firstWhere((element) => element.name==selectedSubGroup).rowKey;
+        //var subGroupRowKey = subGroupOptions.firstWhere((element) => element.name==selectedSubGroup).rowKey;
         var url =
             'https://portalapps.azurewebsites.net/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=$languageCode&groupOptions=$groupRowKey';
         if (searchQuery != "") {
@@ -211,14 +214,14 @@ class _ProductListState extends State<ProductList> {
   void addToCart(Product product) {
     setState(() {
       _isAddingToCart = true; // Set the flag to indicate adding to cart
-      _ProductRowKey=product.rowKey;
+      _productRowKey=product.rowKey;
     });
 
     // Simulate a delay to show the progress indicator
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
-        var cartItem= ShoppingCart.getItems().where((element) => element.rowKey==_ProductRowKey);
-        if(cartItem.length==0){
+        var cartItem= ShoppingCart.getItems().where((element) => element.rowKey==_productRowKey);
+        if(cartItem.isEmpty){
           ShoppingCart.addProduct(product);
           _isAddingToCart = false; // Reset the flag after adding to cart
           // Show a snackbar message
@@ -330,7 +333,7 @@ class _ProductListState extends State<ProductList> {
 
   }
   Widget _buildGroups() {
-    return Container(
+    return SizedBox(
       height: 30, // Adjust the height as needed
       child: ListView(
         shrinkWrap: true,
@@ -354,7 +357,7 @@ class _ProductListState extends State<ProductList> {
     );
   }
   Widget _buildSubGroups() {
-    return Container(
+    return SizedBox(
       height: 30, // Adjust the height as needed
       child: ListView(
         shrinkWrap: true,
@@ -403,7 +406,7 @@ class _ProductListState extends State<ProductList> {
         ): ProgressCustom();
 
       }
-      if(searchQuery!=""&&products.length==0){
+      if(searchQuery!=""&&products.isEmpty){
         return  ListNoResultFound();
       }
       return const SizedBox();
@@ -426,7 +429,7 @@ class _ProductListState extends State<ProductList> {
         },
         addToCart: ()=> addToCart(product),
         showProgressIndicator: _isAddingToCart,
-        rowKey: _ProductRowKey,
+        rowKey: _productRowKey,
         increaseQuantity: _increaseQuantity,
         decreaseQuantity: _decreaseQuantity,
         layoutNumber: layoutNumber,
@@ -448,40 +451,51 @@ class _ProductListState extends State<ProductList> {
   bool isAuthenticated = false; // Assuming this flag manages user authentication status
 
   // Function to handle the action when the user is not authenticated
-  void handleAuthenticationAction() {
+  Future<void> handleAuthenticationAction() async {
     // Implement the action needed when the user is not authenticated
     // For example, show a login dialog or navigate to the authentication screen
     // You can replace this with your actual authentication logic
     // For demonstration purposes, let's show a simple dialog
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Authentication Required'),
-          content: Text('Please log in to perform this action.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Implement the logic to navigate to the authentication screen
-                // For example:
-                // Navigator.pushNamed(context, '/login');
-                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(flutterI18nDelegate)));
-              },
-              child: Text('OK'),
-            ),TextButton(
-              onPressed: () {
-                // Implement the logic to navigate to the authentication screen
-                // For example:
-                // Navigator.pushNamed(context, '/login');
-                Navigator.pop(context); // Close the dialog
-              },
-              child: Text('Later'),
-            ),
-          ],
-        );
-      },
-    );
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userEmail = prefs.getString('userEmail');
+    if(userEmail!=null){
+      isAuthenticated=true;
+    }else {
+      // Retrieve other user information using appropriate keys
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Authentication Required'),
+            content: const Text('Please log in to perform this action.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  // Implement the logic to navigate to the authentication screen
+                  // For example:
+                  // Navigator.pushNamed(context, '/login');
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => LoginPage(flutterI18nDelegate)));
+                },
+                child: const Text('OK'),
+              ), TextButton(
+                onPressed: () {
+                  // Implement the logic to navigate to the authentication screen
+                  // For example:
+                  // Navigator.pushNamed(context, '/login');
+                  Navigator.pop(context); // Close the dialog
+                },
+                child: const Text('Later'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     if (languageCode == "") {
@@ -500,21 +514,25 @@ class _ProductListState extends State<ProductList> {
 
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Product List'),
+          title:  Text(FlutterI18n.translate(context, "ProductList")  ),
           actions: [
-            if (!isAuthenticated)
-              IconButton(
-                onPressed: handleAuthenticationAction,
-                icon: Icon(Icons.error),
-                color: Colors.deepOrange,
-                
-              ),
+
             CartShopIcon(),
             IconButton(onPressed: () {
               setState(() {
                 layoutNumber = (layoutNumber == 2 ? 1 : 2);
               });
-            }, icon: Icon(layoutNumber == 2 ? Icons.view_list : Icons.list_alt))
+            }, icon: Icon(layoutNumber == 2 ? Icons.view_list : Icons.list_alt)),
+            !isAuthenticated? IconButton(
+                onPressed: handleAuthenticationAction,
+                icon: const Icon(Icons.error),
+                color: Colors.deepOrange
+            ): IconButton(
+              onPressed: handleAuthenticationAction,
+              icon: const Icon(Icons.account_circle_sharp),
+              color: Colors.white,
+
+            ),
           ],
         ),
         body: Column(
@@ -571,9 +589,25 @@ class _ProductListState extends State<ProductList> {
                 },
               ) : RefreshIndicator(
 
-                onRefresh: fetchData,
-                child: ListView.builder(
+                onRefresh: () async {
+                  // Set _isRefreshing to true to start the refresh process
+                  setState(() {
+                    //_isRefreshing = true;
+                  });
 
+                  // Your refresh logic here
+                  await fetchData(); // Example: Fetching data
+
+                  // Simulate a delay to remove the indicator (optional)
+                  await Future.delayed(const Duration(milliseconds: 500)); // Adjust duration as needed
+
+                  // Set _isRefreshing to false to indicate the refresh has completed
+                  setState(() {
+                    //_isRefreshing = false;
+                  });
+                },
+                child: ListView.builder(
+                  shrinkWrap: true,
                   controller: _scrollController,
                   itemCount: products.length + 1,
                   itemBuilder: (context, index) {

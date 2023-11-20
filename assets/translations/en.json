@@ -26,5 +26,6 @@
   "passwordConfirmed": "Please enter your confirmed Password",
   "invalidPhone": "Please enter your phone number",
   "invalidPhoneFormate":"Please enter a valid phone number",
-  "Search": "Search"
+  "Search": "Search",
+  "ProductList": "Soq Rawafed"
 }

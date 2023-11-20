@@ -37,6 +37,7 @@ dependencies:
   intl: any
   mailer: any
   easy_debounce: ^2.0.3
+  shared_preferences: any
 
 
 
