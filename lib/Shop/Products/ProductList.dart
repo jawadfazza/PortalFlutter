@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopping/Account/LoginPage.dart';
+import 'package:shopping/Account/Profile.dart';
 import 'package:shopping/GlobalTools/LanguageButtons.dart';
 import 'package:shopping/Shop/Cart/CartList.dart';
 import 'package:http/http.dart' as http;
@@ -454,7 +455,8 @@ class _ProductListState extends State<ProductList> {
   bool isAuthenticated = false; // Assuming this flag manages user authentication status
 
   // Function to handle the action when the user is not authenticated
-  Future<void> handleAuthenticationAction() async {
+  Future<void> handleAuthenticationAction() async {      // ignore: use_build_context_synchronously
+
     // Implement the action needed when the user is not authenticated
     // For example, show a login dialog or navigate to the authentication screen
     // You can replace this with your actual authentication logic
@@ -464,6 +466,8 @@ class _ProductListState extends State<ProductList> {
     String? userEmail = prefs.getString('userEmail');
     if(userEmail!=null){
       isAuthenticated=true;
+      Navigator.push(context, MaterialPageRoute(
+          builder: (context) => Profile(flutterI18nDelegate)));
     }else {
       // Retrieve other user information using appropriate keys
 

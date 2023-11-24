@@ -110,7 +110,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
     final cartItems = ShoppingCart.getItems();
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue, // Set your desired background color
+        //backgroundColor: Colors.blue, // Set your desired background color
         title: Text(
           'Shopping Cart',
           style: TextStyle(fontWeight: FontWeight.bold),

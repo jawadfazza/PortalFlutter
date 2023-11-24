@@ -81,7 +81,7 @@ class CartCard extends StatelessWidget {
                   children: [
                     Text(
                       '${currencyFormat.format(product.price)}',
-                      style: TextStyle(fontSize: 14.0, color: Colors.blue),
+                      style: TextStyle(fontSize: 14.0),
                     ),
                     Spacer(),
                     IconButton(

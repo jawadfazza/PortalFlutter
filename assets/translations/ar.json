@@ -1,26 +1,41 @@
 {
+  "ProductList": "سوق روافد",
+
+  "__FieldRESX": "مورد مورد",
+  "appTitle": "مثال على تبديل اللغات",
+  "hello": "مرحبًا!",
   "registrationForm": "نموذج التسجيل",
   "fullName": "الاسم الكامل",
   "email": "البريد الإلكتروني",
   "password": "كلمة المرور",
   "confirmPassword": "تأكيد كلمة المرور",
-  "submit": "إرسال",
   "phone": "رقم الهاتف",
-  "RegisterAccount": "تسجيل حساب",
-  "LoginAccount": "تسجيل الدخول",
-  "LoginForm": "تسجيل الدخول التسوق بنقرة واحدة",
+  "submit": "إرسال",
+  "RegisterAccount": "تسجيل الحساب",
+  "LoginAccount": "تسجيل الدخول للحساب",
+  "LoginForm": "تسجيل الدخول إلى التسوق بنقرة واحدة",
 
-  "invalidFullName": "يرجى إدخال الاسم الكامل",
-  "invalidEmail": "يرجى إدخال البريد الإلكتروني",
-  "InvalidEmailFormate": "يرجى إدخال عنوان بريد إلكتروني صالح",
-  "invalidPassword": "يرجى إدخال كلمة المرور",
-  "passwordLengthError": "يجب أن تكون كلمة المرور على الأقل 8 أحرف",
+  "__ValidationRESX": "موارد الصلاحية",
+  "invalidFullName": "الرجاء إدخال الاسم الكامل",
+  "invalidEmail": "الرجاء إدخال بريدك الإلكتروني",
+  "invalidEmailFormate": "الرجاء إدخال عنوان بريد إلكتروني صحيح",
+  "invalidPassword": "الرجاء إدخال كلمة المرور",
+  "passwordLengthError": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",
   "passwordUppercaseError": "يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل",
   "passwordLowercaseError": "يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل",
   "passwordDigitError": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
   "passwordMatchError": "كلمات المرور غير متطابقة",
-  "passwordConfirmed": "يرجى إدخال كلمة المرور المؤكدة",
-  "Search": "بحث",
-  "ProductList": "سوق روافد"
-}
+  "passwordConfirmed": "الرجاء إدخال تأكيد كلمة المرور",
+  "invalidPhone": "الرجاء إدخال رقم الهاتف",
+  "invalidPhoneFormate":"الرجاء إدخال رقم هاتف صحيح",
 
+
+  "Search": "بحث",
+
+  "SelectPreferredLanguage": "اختر اللغة المفضلة",
+  "SelectGender": "اختر الجنس",
+
+  "Male": "ذكر",
+  "Female": "أنثى",
+  "Submit": "حفظ التعديلات"
+}

@@ -1,4 +1,6 @@
 {
+  "ProductList": "Soq Rawafed",
+
   "__FieldRESX": "Field Resourse",
   "appTitle": "Language Switching Example",
   "hello": "Hello!",
@@ -26,6 +28,14 @@
   "passwordConfirmed": "Please enter your confirmed Password",
   "invalidPhone": "Please enter your phone number",
   "invalidPhoneFormate":"Please enter a valid phone number",
+
+
   "Search": "Search",
-  "ProductList": "Soq Rawafed"
+
+  "SelectPreferredLanguage": "Select Preferred Language",
+  "SelectGender": "Select Gender",
+
+  "Male": "Male",
+  "Female": "Female",
+  "Submit": "Submit"
 }

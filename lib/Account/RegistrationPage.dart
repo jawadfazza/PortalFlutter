@@ -187,18 +187,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
       languageCode =ModalRoute.of(context)?.settings.arguments as String;
       _changeLanguage(Locale(languageCode));
     }
-    return MaterialApp(
-      localizationsDelegates: [
-       widget.flutterI18nDelegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('ar'),
-      ],
-      locale:  _currentLocale,
-      home: Scaffold(
+    TextDirection textDirection =
+    _currentLocale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+    return Directionality(
+      textDirection: textDirection,
+      child: Scaffold(
         key: _scaffoldKey ,
         appBar: AppBar(
           title: Text(FlutterI18n.translate(context, "registrationForm")),

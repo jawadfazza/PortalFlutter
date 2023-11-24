@@ -37,18 +37,34 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Shopping App',
+      //title: 'Shopping App',
       theme: ThemeData(
-        primaryColor: Colors.deepPurpleAccent, // Set the primary color here
+        appBarTheme: AppBarTheme(backgroundColor: Colors.deepPurple),
+        primaryColor: Colors.deepPurpleAccent,
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 16.0),
+        ),
+        checkboxTheme: CheckboxThemeData(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+        ),
+        radioTheme: RadioThemeData(
+          fillColor: MaterialStateColor.resolveWith((states) => Colors.deepPurpleAccent),
+        ),
+        colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.deepPurpleAccent),
       ),
       localizationsDelegates: [
         flutterI18nDelegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: [
-        const Locale('en'),
-        const Locale('ar'),
+      supportedLocales: const [
+         Locale('en'),
+         Locale('ar'),
       ],
       home: ProductList(flutterI18nDelegate),
     );

@@ -8,6 +8,7 @@ import 'package:shopping/Account/RegistrationPage.dart';
 import '../../GlobalTools/FormButton.dart';
 import '../../GlobalTools/LanguageButtons.dart';
 import '../Shop/Products/ProductList.dart';
+import 'Models/Account.dart';
 
 
 
@@ -114,6 +115,8 @@ class _LoginPageState extends State<LoginPage> {
             Uri.parse(url), headers: headers, body: body);
         // Check the response status code
         if (response.statusCode == 200) {
+          final jsonResponse = json.decode(response.body);
+          Account _account = Account.fromJson(jsonResponse);
           setState(() {
             _isSubmitting = false;
           });
@@ -121,6 +124,8 @@ class _LoginPageState extends State<LoginPage> {
           // Store user information after successful login
           SharedPreferences prefs = await SharedPreferences.getInstance();
           prefs.setString('userEmail', _emailController.text);
+          prefs.setString('RowKey', _account.rowKey);
+
 
           // Request successful, handle the response
           // Send confirmation email after successful Login
@@ -173,21 +178,11 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-
-    return MaterialApp(
-      localizationsDelegates: [
-        widget.flutterI18nDelegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-
-
-      supportedLocales: const [
-        Locale('en'),
-        Locale('ar'),
-      ],
-      locale: _currentLocale,
-      home: Scaffold(
+    TextDirection textDirection =
+    _currentLocale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+    return  Directionality(
+      textDirection: textDirection,
+      child: Scaffold(
         key: _scaffoldKey ,
         appBar: AppBar(
           title: Text(FlutterI18n.translate(context, "LoginForm")),
@@ -235,8 +230,8 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.push(context, MaterialPageRoute(builder: (context) =>
                             RegistrationPage(flutterI18nDelegate),
                             settings: RouteSettings(
-                            arguments:
-                              _currentLocale.languageCode
+                                arguments:
+                                _currentLocale.languageCode
                             )));
 
                       },
