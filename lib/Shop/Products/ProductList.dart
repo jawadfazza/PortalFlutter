@@ -33,14 +33,10 @@ class ProductList extends StatefulWidget {
 }
 
 class _ProductListState extends State<ProductList> {
-
-  Locale currentLocale = LocalizationManager().getCurrentLocale();
-
-  static List<Product> products = [];
-  List<Product> filteredProducts = [];
-  ScrollController _scrollController = ScrollController();
   int pageSize = 20;
   int pageNumber = 1;
+  int layoutNumber=2;
+
 
   bool isLoading = false;
   bool isResultFound = false;
@@ -54,22 +50,33 @@ class _ProductListState extends State<ProductList> {
   String selectedGroup='-'; // No default selected group // Default selected group filter
   String selectedSubGroup='-'; // No default selected group // Default selected group filter
 
-  int layoutNumber=2;
 
+  static List<Product> products = [];
+  List<Product> filteredProducts = [];
   static List<Group> groupOptions=[] ; // List of grouping options
   static List<SubGroup> subGroupOptions=[] ;
   static List<SubGroup> filteredSubGroupOptions=[] ;
 
   final TextEditingController _searchController = TextEditingController();
+  ScrollController _scrollController = ScrollController();
+  Locale currentLocale = LocalizationManager().getCurrentLocale();
 
-
-
-
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    if (currentLocale.languageCode == 'AR') {
+      _changeLanguage(const Locale('ar'));
+    } else {
+      _changeLanguage(const Locale('en'));
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    
+
+
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     groupOptions.add(Group(partitionKey: '', rowKey: '', seq: 1, name: '-', description: '', languageID: currentLocale.languageCode, imageURL: '', active: true));
@@ -90,7 +97,7 @@ class _ProductListState extends State<ProductList> {
 
   Future<void> fetchData() async {
 
-    products.clear();
+
     if (!isLoading) {
       setState(() {
         pageSize = 20;
@@ -100,6 +107,7 @@ class _ProductListState extends State<ProductList> {
         errorMessage = '';
       });
       try {
+        products.clear();
         var groupRowKey = groupOptions.firstWhere((element) => element.name==selectedGroup).rowKey;
         var subGroupRowKey = subGroupOptions.firstWhere((element) => element.name==selectedSubGroup).rowKey;
         var url =
@@ -199,9 +207,8 @@ class _ProductListState extends State<ProductList> {
 
   void _changeLanguage(Locale newLocale) {
     setState(() {
-
       FlutterI18n.refresh(context, newLocale);
-      //currentLocale.load(newLocale);
+      LocalizationManager().setCurrentLocale(newLocale);
       fetchDataGroups();
       fetchDataSubGroups();
       fetchData();
@@ -413,6 +420,7 @@ class _ProductListState extends State<ProductList> {
     }
     else {
       final product = products[index];
+
       return ProductCard(
         product: product,
         onTap: () {
@@ -432,6 +440,7 @@ class _ProductListState extends State<ProductList> {
         layoutNumber: layoutNumber,
       );
     }
+
   }
 
   void _clearSearch() {
@@ -504,12 +513,14 @@ class _ProductListState extends State<ProductList> {
     TextDirection textDirection =
     currentLocale.languageCode == 'AR' ? TextDirection.rtl : TextDirection.ltr;
 
+
     return Directionality(
       textDirection: textDirection,
 
       child: Scaffold(
 
         appBar: AppBar(
+
           title:  Text(FlutterI18n.translate(context, "ProductList")  ),
           actions: [
 
@@ -607,6 +618,7 @@ class _ProductListState extends State<ProductList> {
                   controller: _scrollController,
                   itemCount: products.length + 1,
                   itemBuilder: (context, index) {
+
                     return _buildListItem(context, index);
                   },
                 ),
@@ -636,5 +648,7 @@ class _ProductListState extends State<ProductList> {
 
       ),
     );
+
+
   }
 }
