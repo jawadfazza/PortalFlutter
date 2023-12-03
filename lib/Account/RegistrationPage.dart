@@ -11,18 +11,13 @@ import '../../GlobalTools/LanguageButtons.dart';
 
 
 class RegistrationPage extends StatefulWidget {
-  final FlutterI18nDelegate flutterI18nDelegate;
 
-  RegistrationPage(this.flutterI18nDelegate);
   @override
-  _RegistrationPageState createState() => _RegistrationPageState(flutterI18nDelegate);
+  _RegistrationPageState createState() => _RegistrationPageState();
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
-  _RegistrationPageState(this.flutterI18nDelegate);
 
-
-  final FlutterI18nDelegate flutterI18nDelegate;
   String languageCode ="";
   Locale _currentLocale = Locale("en");
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -148,7 +143,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             _showMessage('Account registered successfully: $FullName, $Email',
                 Colors.lightGreen);
             print(response.body);
-            Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(flutterI18nDelegate)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
           } else {
             // Request failed, handle the error
             print(

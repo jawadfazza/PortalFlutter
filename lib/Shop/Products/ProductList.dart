@@ -13,6 +13,8 @@ import 'package:shopping/Shop/Models/SubGroup.dart';
 import 'package:shopping/Shop/Products/_ProductCard.dart';
 import 'package:shopping/Shop/Products/ProductDetails.dart';
 import '../../GlobalTools/ErrorScreen.dart';
+import '../../GlobalTools/LocalizationManager.dart';
+import '../../main.dart';
 import '../Groups/FilterOption.dart';
 import '../../GlobalTools/ListNoResultFound.dart';
 import '../../GlobalTools/ProgressCustome.dart';
@@ -23,21 +25,16 @@ import '../Cart/_CartShopIcon.dart';
 
 
 class ProductList extends StatefulWidget {
-  final FlutterI18nDelegate flutterI18nDelegate;
 
-  const ProductList(this.flutterI18nDelegate, {super.key});
   @override
   // ignore: library_private_types_in_public_api
   _ProductListState createState() =>
-      _ProductListState(flutterI18nDelegate);
+      _ProductListState();
 }
 
 class _ProductListState extends State<ProductList> {
 
-
-
-  String languageCode = "";
-  Locale _currentLocale = const Locale("en");
+  Locale currentLocale = LocalizationManager().getCurrentLocale();
 
   static List<Product> products = [];
   List<Product> filteredProducts = [];
@@ -65,22 +62,21 @@ class _ProductListState extends State<ProductList> {
 
   final TextEditingController _searchController = TextEditingController();
 
-  FlutterI18nDelegate  flutterI18nDelegate ;
-  _ProductListState(this. flutterI18nDelegate);
+
 
 
 
   @override
   void initState() {
     super.initState();
+    
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    groupOptions.add(Group(partitionKey: '', rowKey: '', seq: 1, name: '-', description: '', languageID: languageCode, imageURL: '', active: true));
+    groupOptions.add(Group(partitionKey: '', rowKey: '', seq: 1, name: '-', description: '', languageID: currentLocale.languageCode, imageURL: '', active: true));
     fetchDataGroups();
-    filteredSubGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: languageCode, imageURL: '', active: true,groupRowKey: ''));
-    subGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: languageCode, imageURL: '', active: true,groupRowKey: ''));
+    filteredSubGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: currentLocale.languageCode, imageURL: '', active: true,groupRowKey: ''));
+    subGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: currentLocale.languageCode, imageURL: '', active: true,groupRowKey: ''));
     fetchDataSubGroups();
-
     fetchData();
   }
 
@@ -93,8 +89,8 @@ class _ProductListState extends State<ProductList> {
   }
 
   Future<void> fetchData() async {
+
     products.clear();
-    languageCode = _currentLocale.languageCode.toUpperCase();
     if (!isLoading) {
       setState(() {
         pageSize = 20;
@@ -107,10 +103,10 @@ class _ProductListState extends State<ProductList> {
         var groupRowKey = groupOptions.firstWhere((element) => element.name==selectedGroup).rowKey;
         var subGroupRowKey = subGroupOptions.firstWhere((element) => element.name==selectedSubGroup).rowKey;
         var url =
-            'https://portalapps.azurewebsites.net/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=$languageCode&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
+            'https://portalapps.azurewebsites.net/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale.languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
         if (searchQuery != "") {
           url =
-          'https://portalapps.azurewebsites.net/api/Products/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=$languageCode&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
+          'https://portalapps.azurewebsites.net/api/Products/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale.languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
         }
         final response = await http.get(Uri.parse(url));
 
@@ -141,7 +137,6 @@ class _ProductListState extends State<ProductList> {
   }
 
   Future<void> loadMoreData() async {
-    languageCode = _currentLocale.languageCode.toUpperCase();
     if (!isLoading) {
       setState(() {
         isLoading = true;
@@ -157,10 +152,10 @@ class _ProductListState extends State<ProductList> {
         var groupRowKey = groupOptions.firstWhere((element) => element.name==selectedGroup).rowKey;
         var subGroupRowKey = subGroupOptions.firstWhere((element) => element.name==selectedSubGroup).rowKey;
         var url =
-            'https://portalapps.azurewebsites.net/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=$languageCode&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
+            'https://portalapps.azurewebsites.net/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale.languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
         if (searchQuery != "") {
           url =
-          'https://portalapps.azurewebsites.net/api/Products/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=$languageCode&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
+          'https://portalapps.azurewebsites.net/api/Products/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale.languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
         }
         final response = await http.get(Uri.parse(url));
 
@@ -204,8 +199,9 @@ class _ProductListState extends State<ProductList> {
 
   void _changeLanguage(Locale newLocale) {
     setState(() {
-      _currentLocale = newLocale;
+
       FlutterI18n.refresh(context, newLocale);
+      //currentLocale.load(newLocale);
       fetchDataGroups();
       fetchDataSubGroups();
       fetchData();
@@ -281,9 +277,9 @@ class _ProductListState extends State<ProductList> {
 
 
   Future<void> fetchDataGroups() async {
-    languageCode = _currentLocale.languageCode.toUpperCase();
+
     try {
-      var url = 'https://portalapps.azurewebsites.net/api/Groups/LoadAllData?Lan=$languageCode';
+      var url = 'https://portalapps.azurewebsites.net/api/Groups/LoadAllData?Lan=${currentLocale.languageCode}';
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
@@ -294,7 +290,7 @@ class _ProductListState extends State<ProductList> {
         setState(() {
 
           groupOptions.clear();
-          groupOptions.add(Group(partitionKey: '', rowKey: '', seq: 1, name: '-', description: '', languageID: languageCode, imageURL: '', active: true));
+          groupOptions.add(Group(partitionKey: '', rowKey: '', seq: 1, name: '-', description: '', languageID: currentLocale.languageCode, imageURL: '', active: true));
           groupOptions.addAll(newGroups);
 
         });
@@ -306,9 +302,9 @@ class _ProductListState extends State<ProductList> {
 
   }
   Future<void> fetchDataSubGroups() async {
-    languageCode = _currentLocale.languageCode.toUpperCase();
+
     try {
-      var url = 'https://portalapps.azurewebsites.net/api/SubGroups/LoadAllData?Lan=$languageCode';
+      var url = 'https://portalapps.azurewebsites.net/api/SubGroups/LoadAllData?Lan=${currentLocale.languageCode}';
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
@@ -320,11 +316,11 @@ class _ProductListState extends State<ProductList> {
         //print(newSubGroups.);
         setState(() {
           subGroupOptions.clear();
-          subGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: languageCode, imageURL: '', active: true,groupRowKey: ''));
+          subGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: Localizations.localeOf(context).languageCode, imageURL: '', active: true,groupRowKey: ''));
           subGroupOptions.addAll(newSubGroups);
 
           filteredSubGroupOptions.clear();
-          filteredSubGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: languageCode, imageURL: '', active: true,groupRowKey: ''));
+          filteredSubGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: Localizations.localeOf(context).languageCode, imageURL: '', active: true,groupRowKey: ''));
           filteredSubGroupOptions.addAll(newSubGroups);
         });
       }
@@ -424,10 +420,7 @@ class _ProductListState extends State<ProductList> {
             context,
             MaterialPageRoute(
                 builder: (context) => ProductDetails(product: product),
-                settings: RouteSettings(
-                    arguments:
-                    _currentLocale.languageCode
-                )
+
             ),
           );
         },
@@ -467,7 +460,7 @@ class _ProductListState extends State<ProductList> {
     if(userEmail!=null){
       isAuthenticated=true;
       Navigator.push(context, MaterialPageRoute(
-          builder: (context) => Profile(flutterI18nDelegate)));
+          builder: (context) => Profile()));
     }else {
       // Retrieve other user information using appropriate keys
 
@@ -484,7 +477,7 @@ class _ProductListState extends State<ProductList> {
                   // For example:
                   // Navigator.pushNamed(context, '/login');
                   Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => LoginPage(flutterI18nDelegate)));
+                      builder: (context) => LoginPage()));
                 },
                 child: const Text('OK'),
               ), TextButton(
@@ -505,21 +498,17 @@ class _ProductListState extends State<ProductList> {
 
   @override
   Widget build(BuildContext context) {
-    if (languageCode == "") {
-      languageCode = ModalRoute
-          .of(context)
-          ?.settings
-          .arguments as String;
-      _changeLanguage(Locale(languageCode));
-    }
+
+    //_changeLanguage(currentLocale);
     // Determine the text direction based on the current locale
     TextDirection textDirection =
-    _currentLocale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+    currentLocale.languageCode == 'AR' ? TextDirection.rtl : TextDirection.ltr;
 
     return Directionality(
       textDirection: textDirection,
 
       child: Scaffold(
+
         appBar: AppBar(
           title:  Text(FlutterI18n.translate(context, "ProductList")  ),
           actions: [
@@ -626,7 +615,7 @@ class _ProductListState extends State<ProductList> {
           ],
         ),
         bottomNavigationBar: LanguageButtons(
-          currentLocale: _currentLocale,
+          currentLocale: currentLocale,
           changeLanguage: _changeLanguage,
         ),
         floatingActionButton: Visibility(

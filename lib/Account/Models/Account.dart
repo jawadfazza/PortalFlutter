@@ -9,7 +9,7 @@ class Account {
   String password;
   DateTime passwordExpiredDate;
   String gender;
-  String preferredLanguage;
+  String preferdLanguage;
   String accountType;
   String profilePictureUrl;
   DateTime accountCreatedDate;
@@ -28,7 +28,7 @@ class Account {
     required this.password,
     required this.passwordExpiredDate,
     required this.gender,
-    required this.preferredLanguage,
+    required this.preferdLanguage,
     required this.accountType,
     required this.profilePictureUrl,
     required this.accountCreatedDate,
@@ -50,7 +50,7 @@ class Account {
       'password': password,
       'passwordExpiredDate': passwordExpiredDate.toIso8601String(),
       'gender': gender,
-      'preferredLanguage': preferredLanguage,
+      'preferdLanguage': preferdLanguage,
       'accountType': accountType,
       'profilePictureUrl': profilePictureUrl,
       'accountCreatedDate': accountCreatedDate.toIso8601String(),
@@ -72,8 +72,9 @@ class Account {
       accountConfirmed: json['accountConfirmed'] ?? false,
       password: json['password'] ?? '',
       passwordExpiredDate: DateTime.parse(json['passwordExpiredDate'] ?? ''),
+      preferdLanguage: json['preferdLanguage'] ?? '',
       gender: json['gender'] ?? '',
-      preferredLanguage: json['preferredLanguage'] ?? '',
+
       accountType: json['accountType'] ?? '',
       profilePictureUrl: json['profilePictureUrl'] ?? '',
       accountCreatedDate: DateTime.parse(json['accountCreatedDate'] ?? ''),

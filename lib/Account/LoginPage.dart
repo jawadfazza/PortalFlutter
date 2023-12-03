@@ -13,17 +13,13 @@ import 'Models/Account.dart';
 
 
 class LoginPage extends StatefulWidget {
-  final FlutterI18nDelegate flutterI18nDelegate;
-  LoginPage(this.flutterI18nDelegate);
+
   @override
-  _LoginPageState createState() => _LoginPageState(flutterI18nDelegate);
+  _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  _LoginPageState(this.flutterI18nDelegate);
 
-  String languageCode ="";
-  final FlutterI18nDelegate flutterI18nDelegate;
   Locale _currentLocale = const Locale('en', 'US');
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -125,21 +121,15 @@ class _LoginPageState extends State<LoginPage> {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           prefs.setString('userEmail', _emailController.text);
           prefs.setString('RowKey', _account.rowKey);
-
+          prefs.setString('preferdLanguage', _account.preferdLanguage);
 
           // Request successful, handle the response
           // Send confirmation email after successful Login
           _showMessage('Account Authenticated Successfully: , $Email',
               Colors.lightGreen);
-          // Save the account data to session
-          // await SessionManager.saveAccountData(
-          //   fullName: _fullnameController.text,
-          //   email: _emailController.text,
-          //   // Add other account data if needed
-          // );
           print(response.body);
           Navigator.push(context, MaterialPageRoute(builder:
-              (context) => ProductList(flutterI18nDelegate),
+              (context) => ProductList(),
               settings: RouteSettings(
                   arguments:
                   _currentLocale.languageCode
@@ -228,11 +218,8 @@ class _LoginPageState extends State<LoginPage> {
                   TextButton(
                       onPressed:() {
                         Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                            RegistrationPage(flutterI18nDelegate),
-                            settings: RouteSettings(
-                                arguments:
-                                _currentLocale.languageCode
-                            )));
+                            RegistrationPage(),
+                        ));
 
                       },
                       child: Text(FlutterI18n.translate(context, "RegisterAccount")))

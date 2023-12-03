@@ -11,18 +11,13 @@ import '../GlobalTools/FormButton.dart';
 import '../GlobalTools/LanguageButtons.dart';
 
 class Profile extends StatefulWidget {
-  final FlutterI18nDelegate flutterI18nDelegate;
-
-  Profile(this.flutterI18nDelegate);
   @override
-  _ProfileState createState() => _ProfileState(flutterI18nDelegate);
+  _ProfileState createState() => _ProfileState();
 }
 
 class _ProfileState extends State<Profile> {
-  _ProfileState(this.flutterI18nDelegate);
 
-  final FlutterI18nDelegate flutterI18nDelegate;
-  String languageCode = "";
+
   Locale _currentLocale = const Locale("en");
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -105,8 +100,8 @@ class _ProfileState extends State<Profile> {
         'fullName': _fullnameController.text,
         'email': _emailController.text,
         'PhoneNumber': _phoneController.text,
-        'Gender': _genderController.text,
-        'PreferdLanguage': _preferredLanguageController.text
+        'Gender': _selectedGender,
+        'PreferdLanguage': _preferredLanguage
       });
       try {
         // Make the POST request
@@ -123,7 +118,7 @@ class _ProfileState extends State<Profile> {
               Colors.lightGreen);
           print(response.body);
           Navigator.push(context, MaterialPageRoute(
-              builder: (context) => ProductList(flutterI18nDelegate)));
+              builder: (context) => ProductList()));
         } else {
           // Request failed, handle the error
           print(
@@ -146,7 +141,7 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> fetchDataProfile() async {
-    languageCode = _currentLocale.languageCode.toUpperCase();
+    //languageCode = _currentLocale.languageCode.toUpperCase();
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     RowKey = prefs.getString('RowKey');
@@ -155,12 +150,16 @@ class _ProfileState extends State<Profile> {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
+        print(jsonResponse);
         Account _account = Account.fromJson(jsonResponse);
 
         setState(() {
           _fullnameController.text = _account.fullName ?? '';
           _emailController.text = _account.email ?? '';
           _phoneController.text = _account.phoneNumber ?? '';
+          _selectedGender= _account.gender ?? '';
+          _preferredLanguage = _account.preferdLanguage ?? '';
+
           // Set other fields' values similarly
         });
       }
@@ -193,11 +192,12 @@ class _ProfileState extends State<Profile> {
     // Navigate to the login page after signing out
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginPage(flutterI18nDelegate)),
+      MaterialPageRoute(builder: (context) => LoginPage()),
     );
   }
 
   String _selectedGender = '';
+  String _preferredLanguage='';
 
   @override
   Widget build(BuildContext context) {
@@ -271,8 +271,7 @@ class _ProfileState extends State<Profile> {
                             onChanged: (value) {
                               setState(() {
                                 _selectedGender = value! ? 'Male' : '';
-                                _genderController.text =
-                                    _selectedGender; // Update the TextFormField value
+                                _genderController.text = _selectedGender; // Update the TextFormField value
                               });
                             },
                           ),
@@ -288,8 +287,7 @@ class _ProfileState extends State<Profile> {
                             onChanged: (value) {
                               setState(() {
                                 _selectedGender = value! ? 'Female' : '';
-                                _genderController.text =
-                                    _selectedGender; // Update the TextFormField value
+                                _genderController.text = _selectedGender; // Update the TextFormField value
                               });
                             },
                           ),
@@ -319,14 +317,15 @@ class _ProfileState extends State<Profile> {
                       ),
                       Row(
                         children: <Widget>[
-                          Radio<String>(
-                            value: 'EN',
-                            groupValue: languageCode,
+                          Checkbox(
+
+                            value: _preferredLanguage=='EN',
+
                             onChanged: (value) {
                               setState(() {
-                                languageCode = value!;
+                                _preferredLanguage = value! ?'EN':'';
                                 _preferredLanguageController.text =
-                                'English'; // Update the TextFormField value
+                                'EN'; // Update the TextFormField value
                               });
                             },
                           ),
@@ -337,14 +336,14 @@ class _ProfileState extends State<Profile> {
                                 .textTheme
                                 .bodyText2,
                           ),
-                          Radio<String>(
-                            value: 'AR',
-                            groupValue: languageCode,
+                          Checkbox(
+                            value:  _preferredLanguage=='AR',
+
                             onChanged: (value) {
                               setState(() {
-                                languageCode = value!;
+                                _preferredLanguage = value! ?'AR':'';
                                 _preferredLanguageController.text =
-                                'Arabic'; // Update the TextFormField value
+                                'AR'; // Update the TextFormField value
                               });
                             },
                           ),
