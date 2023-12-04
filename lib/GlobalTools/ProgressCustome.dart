@@ -18,6 +18,7 @@ class ProgressCustom extends StatelessWidget {
             color ?? Theme.of(context).primaryColor,
           ),
           strokeWidth: strokeWidth,
+
         ),
       ),
     );
