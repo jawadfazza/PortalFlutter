@@ -47,6 +47,7 @@ class _ProductListState extends State<ProductList> {
   String searchQuery = '';
   String errorMessage = '';
   late String _productRowKey = '';
+  String? RowKey ='';
   String selectedGroup='-'; // No default selected group // Default selected group filter
   String selectedSubGroup='-'; // No default selected group // Default selected group filter
 
@@ -465,14 +466,10 @@ class _ProductListState extends State<ProductList> {
     // For demonstration purposes, let's show a simple dialog
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userEmail = prefs.getString('userEmail');
-    if(userEmail!=null){
-      isAuthenticated=true;
-      Navigator.push(context, MaterialPageRoute(
-          builder: (context) => Profile()));
-    }else {
-      // Retrieve other user information using appropriate keys
+    RowKey = prefs.getString('RowKey');
 
+    if(RowKey=='') {
+      // Retrieve other user information using appropriate keys
       showDialog(
         context: context,
         builder: (context) {
@@ -502,6 +499,10 @@ class _ProductListState extends State<ProductList> {
           );
         },
       );
+    }else{
+      setState(() {
+        isAuthenticated=true;
+      });
     }
   }
 
@@ -512,7 +513,7 @@ class _ProductListState extends State<ProductList> {
     // Determine the text direction based on the current locale
     TextDirection textDirection =
     currentLocale.languageCode == 'AR' ? TextDirection.rtl : TextDirection.ltr;
-
+    handleAuthenticationAction();
 
     return Directionality(
       textDirection: textDirection,
@@ -535,7 +536,7 @@ class _ProductListState extends State<ProductList> {
                 icon: const Icon(Icons.error),
                 color: Colors.deepOrange
             ): IconButton(
-              onPressed: handleAuthenticationAction,
+              onPressed: (){ Navigator.push(context, MaterialPageRoute(builder: (context) => Profile())); },
               icon: const Icon(Icons.account_circle_sharp),
               color: Colors.white,
 

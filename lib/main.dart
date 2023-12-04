@@ -7,6 +7,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shopping/GlobalTools/ProgressCustome.dart';
 import 'Account/Models/Account.dart';
 import 'GlobalTools/LocalizationManager.dart';
 import 'Shop/Products/ProductList.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatefulWidget {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String? RowKey = prefs.getString('RowKey');
+    final LocalizationManager localizationManager = LocalizationManager();
     try {
       var url = 'https://portalapps.azurewebsites.net/api/Accounts/GetByRowKey?RowKey=$RowKey';
       final response = await http.get(Uri.parse(url));
@@ -42,14 +44,21 @@ class MyApp extends StatefulWidget {
         final jsonResponse = json.decode(response.body);
         print(jsonResponse);
         Account _account = Account.fromJson(jsonResponse);
-        final LocalizationManager localizationManager = LocalizationManager();
+
 
         setState(() {
           preferdLanguage = _account.preferdLanguage;
           localizationManager.setCurrentLocale(Locale(preferdLanguage));
           fetchedData = true;
         });
+      }else{
+        setState(() {
+          preferdLanguage = "en";
+          localizationManager.setCurrentLocale(Locale(preferdLanguage));
+          fetchedData = true;
+        });
       }
+
     } catch (error) {
       print(error);
     }
@@ -58,12 +67,26 @@ class MyApp extends StatefulWidget {
   @override
   Widget build(BuildContext context) {
     if (!fetchedData) {
-      return CircularProgressIndicator(); // Show a loading indicator until data is fetched
+      return  const Center(
+        child: SizedBox(
+          width: 100,
+          height: 100,
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+            strokeWidth: 4,
+            semanticsLabel: 'Loading',
+            // Adjust the duration of the animation (default is 1.5 seconds)
+            // duration: Duration(seconds: 2),
+          ),
+        ),
+      );
+
+
     } else {
       return MaterialApp(
         theme: ThemeData(
-          appBarTheme: AppBarTheme(backgroundColor: Colors.deepPurple),
-          primaryColor: Colors.deepPurpleAccent,
+          appBarTheme: AppBarTheme(backgroundColor: Colors.blueGrey),
+          primaryColor: Colors.blueAccent,
           inputDecorationTheme: InputDecorationTheme(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
