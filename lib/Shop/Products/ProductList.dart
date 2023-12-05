@@ -4,7 +4,6 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopping/Account/LoginPage.dart';
 import 'package:shopping/Account/Profile.dart';
-import 'package:shopping/GlobalTools/LanguageButtons.dart';
 import 'package:shopping/Shop/Cart/CartList.dart';
 import 'package:http/http.dart' as http;
 import 'package:shopping/Shop/Models/Group.dart';
@@ -19,6 +18,7 @@ import '../Groups/FilterOption.dart';
 import '../../GlobalTools/ListNoResultFound.dart';
 import '../../GlobalTools/ProgressCustome.dart';
 import '../Cart/_CartShopIcon.dart';
+import 'bottomNavigationBar.dart';
 
 
 
@@ -39,6 +39,7 @@ class _ProductListState extends State<ProductList> {
 
 
   bool isLoading = false;
+  bool isPageLoading = false;
   bool isResultFound = false;
   bool hasError = false;
   bool _showScrollButton = false; // Add this variable
@@ -60,6 +61,7 @@ class _ProductListState extends State<ProductList> {
 
   final TextEditingController _searchController = TextEditingController();
   ScrollController _scrollController = ScrollController();
+
   Locale currentLocale = LocalizationManager().getCurrentLocale();
 
   @override
@@ -76,17 +78,53 @@ class _ProductListState extends State<ProductList> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+      isPageLoading = true;
+    });
 
-
+    handleAuthenticationAction();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    groupOptions.add(Group(partitionKey: '', rowKey: '', seq: 1, name: '-', description: '', languageID: currentLocale.languageCode, imageURL: '', active: true));
+    groupOptions.add(Group(
+      partitionKey: '',
+      rowKey: '',
+      seq: 1,
+      name: '-',
+      description: '',
+      languageID: currentLocale.languageCode,
+      imageURL: '',
+      active: true,
+    ));
     fetchDataGroups();
-    filteredSubGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: currentLocale.languageCode, imageURL: '', active: true,groupRowKey: ''));
-    subGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: currentLocale.languageCode, imageURL: '', active: true,groupRowKey: ''));
+    filteredSubGroupOptions.add(SubGroup(
+      partitionKey: '',
+      rowKey: '',
+      seq: 1,
+      name: '-',
+      languageID: currentLocale.languageCode,
+      imageURL: '',
+      active: true,
+      groupRowKey: '',
+    ));
+    subGroupOptions.add(SubGroup(
+      partitionKey: '',
+      rowKey: '',
+      seq: 1,
+      name: '-',
+      languageID: currentLocale.languageCode,
+      imageURL: '',
+      active: true,
+      groupRowKey: '',
+    ));
     fetchDataSubGroups();
-    fetchData();
+    fetchData().then((_) {
+      // Set isPageLoading to false after fetchData completes
+      setState(() {
+        isPageLoading = false;
+      });
+    });
   }
+
 
 
   @override
@@ -104,6 +142,7 @@ class _ProductListState extends State<ProductList> {
         pageSize = 20;
         pageNumber = 1;
         isLoading= true;
+
         hasError = false;
         errorMessage = '';
       });
@@ -468,7 +507,7 @@ class _ProductListState extends State<ProductList> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     RowKey = prefs.getString('RowKey');
 
-    if(RowKey=='') {
+    if(RowKey==null) {
       // Retrieve other user information using appropriate keys
       showDialog(
         context: context,
@@ -505,15 +544,39 @@ class _ProductListState extends State<ProductList> {
       });
     }
   }
+  int _selectedIndex = 0;
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      //ProductLIst
+      case 0:
+        //Navigator.push(context,MaterialPageRoute(builder:(context) => ProductList()));
+        break;
+      case 1:
+      // Navigate to the settings page or perform settings-related actions
+        //Navigator.push(context,MaterialPageRoute(builder:(context) => Profile()));
+        break;
+      case 2:
+      // Navigate to the settings page or perform settings-related actions
+        Navigator.push(context,MaterialPageRoute(builder:(context) => Profile()));
+        break;
+    // Add more cases for other items if needed
+      default:
+        break;
+    }
+  }
   @override
   Widget build(BuildContext context) {
 
     //_changeLanguage(currentLocale);
     // Determine the text direction based on the current locale
     TextDirection textDirection =
-    currentLocale.languageCode == 'AR' ? TextDirection.rtl : TextDirection.ltr;
-    handleAuthenticationAction();
+    currentLocale.languageCode.toLowerCase() == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+
 
     return Directionality(
       textDirection: textDirection,
@@ -535,15 +598,14 @@ class _ProductListState extends State<ProductList> {
                 onPressed: handleAuthenticationAction,
                 icon: const Icon(Icons.error),
                 color: Colors.deepOrange
-            ): IconButton(
-              onPressed: (){ Navigator.push(context, MaterialPageRoute(builder: (context) => Profile())); },
-              icon: const Icon(Icons.account_circle_sharp),
-              color: Colors.white,
-
-            ),
+            ):Container(),
           ],
         ),
-        body: Column(
+        body:  isPageLoading
+            ? Center(
+          child: CircularProgressIndicator(), // Display a loading indicator
+        )
+            : Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -627,10 +689,11 @@ class _ProductListState extends State<ProductList> {
             ),
           ],
         ),
-        bottomNavigationBar: LanguageButtons(
-          currentLocale: currentLocale,
-          changeLanguage: _changeLanguage,
+        bottomNavigationBar: ProfileBottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onItemTapped: _onItemTapped,
         ),
+
         floatingActionButton: Visibility(
           visible: _showScrollButton,
           child: FloatingActionButton(

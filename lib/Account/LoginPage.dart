@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopping/Account/RegistrationPage.dart';
+import 'package:shopping/main.dart';
 import '../../GlobalTools/FormButton.dart';
 import '../../GlobalTools/LanguageButtons.dart';
 import '../Shop/Products/ProductList.dart';
@@ -128,12 +129,7 @@ class _LoginPageState extends State<LoginPage> {
           _showMessage('Account Authenticated Successfully: , $Email',
               Colors.lightGreen);
           print(response.body);
-          Navigator.push(context, MaterialPageRoute(builder:
-              (context) => ProductList(),
-              settings: RouteSettings(
-                  arguments:
-                  _currentLocale.languageCode
-              )));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
 
         } else {
           // Request failed, handle the error

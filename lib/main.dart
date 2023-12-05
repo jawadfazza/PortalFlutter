@@ -21,10 +21,8 @@ class MyApp extends StatefulWidget {
 }
 
  class _MyAppState extends State<MyApp> {
-   static String preferdLanguage = "";
-
-
-  bool fetchedData = false;
+   static String preferdLanguage = "EN";
+   bool fetchedData = false;
 
   @override
   void initState() {
@@ -47,13 +45,13 @@ class MyApp extends StatefulWidget {
 
 
         setState(() {
-          preferdLanguage = _account.preferdLanguage;
+          preferdLanguage = _account.preferdLanguage!=""?_account.preferdLanguage:"EN";
           localizationManager.setCurrentLocale(Locale(preferdLanguage));
           fetchedData = true;
         });
       }else{
         setState(() {
-          preferdLanguage = "en";
+          preferdLanguage = "EN";
           localizationManager.setCurrentLocale(Locale(preferdLanguage));
           fetchedData = true;
         });
@@ -66,22 +64,34 @@ class MyApp extends StatefulWidget {
 
   @override
   Widget build(BuildContext context) {
+
     if (!fetchedData) {
-      return  const Center(
-        child: SizedBox(
-          width: 100,
-          height: 100,
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
-            strokeWidth: 4,
-            semanticsLabel: 'Loading',
-            // Adjust the duration of the animation (default is 1.5 seconds)
-            // duration: Duration(seconds: 2),
+      return Center(
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: SingleChildScrollView(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                      strokeWidth: 4,
+                      semanticsLabel: 'Loading',
+                    ),
+                  ),
+                  //SizedBox(height: 20),
+                  //
+                ],
+              ),
+            ),
           ),
         ),
       );
-
-
     } else {
       return MaterialApp(
         theme: ThemeData(

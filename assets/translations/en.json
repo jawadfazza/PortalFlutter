@@ -37,5 +37,10 @@
 
   "Male": "Male",
   "Female": "Female",
-  "Submit": "Submit"
+  "Submit": "Submit",
+
+  "Home": "Home",
+  "Shops": "Shops",
+  "Profile": "Profile"
 }
+

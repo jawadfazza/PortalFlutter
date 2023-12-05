@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopping/Account/LoginPage.dart';
 import 'package:shopping/Account/Models/Account.dart';
-import 'package:shopping/Shop/Products/ProductList.dart';
+import 'package:shopping/Shop/Products/bottomNavigationBar.dart';
+import 'package:shopping/main.dart';
 import '../GlobalTools/FormButton.dart';
-import '../GlobalTools/LanguageButtons.dart';
+import '../GlobalTools/LocalizationManager.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -17,12 +17,10 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
 
-
-  Locale _currentLocale = const Locale("en");
+  bool isPageLoading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _isSubmitting = false; // Flag to track form submission status
-  bool _isPasswordMatch = true;
   String? RowKey ="";
 
   TextEditingController _emailController = TextEditingController();
@@ -30,6 +28,9 @@ class _ProfileState extends State<Profile> {
   TextEditingController _phoneController = TextEditingController();
   TextEditingController _genderController = TextEditingController();
   TextEditingController _preferredLanguageController = TextEditingController();
+
+  Locale currentLocale = LocalizationManager().getCurrentLocale();
+
 
 
   String? _validateEmail(String? value) {
@@ -70,7 +71,14 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
-    fetchDataProfile();
+    setState(() {
+      isPageLoading = true;
+    });
+    fetchDataProfile().then((value) {
+      setState(() {
+        isPageLoading = false;
+      });
+    });
   }
 
 
@@ -118,7 +126,7 @@ class _ProfileState extends State<Profile> {
               Colors.lightGreen);
           print(response.body);
           Navigator.push(context, MaterialPageRoute(
-              builder: (context) => ProductList()));
+              builder: (context) => MyApp()));
         } else {
           // Request failed, handle the error
           print(
@@ -178,9 +186,34 @@ class _ProfileState extends State<Profile> {
 
   void _changeLanguage(Locale newLocale) {
     setState(() {
-      _currentLocale = newLocale;
       FlutterI18n.refresh(context, newLocale);
     });
+  }
+
+  int _selectedIndex = 2;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+    //ProductLIst
+      case 0:
+        Navigator.push(context,MaterialPageRoute(builder:(context) => MyApp()));
+        break;
+      case 1:
+      // Navigate to the settings page or perform settings-related actions
+      //Navigator.push(context,MaterialPageRoute(builder:(context) => Profile()));
+        break;
+      case 2:
+      // Navigate to the settings page or perform settings-related actions
+        //Navigator.push(context,MaterialPageRoute(builder:(context) => Profile()));
+        break;
+    // Add more cases for other items if needed
+      default:
+        break;
+    }
   }
 
   // Sign-out method
@@ -199,10 +232,12 @@ class _ProfileState extends State<Profile> {
   String _selectedGender = '';
   String _preferredLanguage='';
 
+
+
   @override
   Widget build(BuildContext context) {
-    TextDirection textDirection =
-    _currentLocale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+    TextDirection textDirection = currentLocale.languageCode.toLowerCase() == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+
     return Directionality(
       textDirection: textDirection,
       child: Scaffold(
@@ -217,7 +252,11 @@ class _ProfileState extends State<Profile> {
           ),
         ),
         backgroundColor: Colors.white,
-        body: SingleChildScrollView(
+        body: isPageLoading?
+        Center(
+          child: CircularProgressIndicator(), // Display a loading indicator
+        ):
+        SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Form(
@@ -371,9 +410,9 @@ class _ProfileState extends State<Profile> {
             ),
           ),
         ),
-        bottomNavigationBar: LanguageButtons(
-          currentLocale: _currentLocale,
-          changeLanguage: _changeLanguage,
+        bottomNavigationBar: ProfileBottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onItemTapped: _onItemTapped,
         ),
       ),
     );
