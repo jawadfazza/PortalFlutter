@@ -11,6 +11,7 @@ import 'package:shopping/Shop/Models/Product.dart';
 import 'package:shopping/Shop/Models/SubGroup.dart';
 import 'package:shopping/Shop/Products/_ProductCard.dart';
 import 'package:shopping/Shop/Products/ProductDetails.dart';
+import '../../GlobalTools/AppConfig.dart';
 import '../../GlobalTools/ErrorScreen.dart';
 import '../../GlobalTools/LocalizationManager.dart';
 import '../../main.dart';
@@ -35,7 +36,7 @@ class ProductList extends StatefulWidget {
 class _ProductListState extends State<ProductList> {
   int pageSize = 20;
   int pageNumber = 1;
-  int layoutNumber=2;
+  int layoutNumber = 2;
 
 
   bool isLoading = false;
@@ -48,16 +49,17 @@ class _ProductListState extends State<ProductList> {
   String searchQuery = '';
   String errorMessage = '';
   late String _productRowKey = '';
-  String? RowKey ='';
-  String selectedGroup='-'; // No default selected group // Default selected group filter
-  String selectedSubGroup='-'; // No default selected group // Default selected group filter
+  String? RowKey = '';
+  String selectedGroup = '-'; // No default selected group // Default selected group filter
+  String selectedSubGroup = '-'; // No default selected group // Default selected group filter
 
 
   static List<Product> products = [];
   List<Product> filteredProducts = [];
-  static List<Group> groupOptions=[] ; // List of grouping options
-  static List<SubGroup> subGroupOptions=[] ;
-  static List<SubGroup> filteredSubGroupOptions=[] ;
+  static List<Group> groupOptions = []; // List of grouping options
+  static List<SubGroup> subGroupOptions = [];
+
+  static List<SubGroup> filteredSubGroupOptions = [];
 
   final TextEditingController _searchController = TextEditingController();
   ScrollController _scrollController = ScrollController();
@@ -126,7 +128,6 @@ class _ProductListState extends State<ProductList> {
   }
 
 
-
   @override
   void dispose() {
     _searchController.dispose();
@@ -135,26 +136,30 @@ class _ProductListState extends State<ProductList> {
   }
 
   Future<void> fetchData() async {
-
-
     if (!isLoading) {
       setState(() {
         pageSize = 20;
         pageNumber = 1;
-        isLoading= true;
+        isLoading = true;
 
         hasError = false;
         errorMessage = '';
       });
       try {
         products.clear();
-        var groupRowKey = groupOptions.firstWhere((element) => element.name==selectedGroup).rowKey;
-        var subGroupRowKey = subGroupOptions.firstWhere((element) => element.name==selectedSubGroup).rowKey;
+        var groupRowKey = groupOptions
+            .firstWhere((element) => element.name == selectedGroup)
+            .rowKey;
+        var subGroupRowKey = subGroupOptions
+            .firstWhere((element) => element.name == selectedSubGroup)
+            .rowKey;
         var url =
-            'https://portalapps.azurewebsites.net/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale.languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
+            'https://portalapps.azurewebsites.net/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale
+            .languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
         if (searchQuery != "") {
           url =
-          'https://portalapps.azurewebsites.net/api/Products/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale.languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
+          '${AppConfig.baseUrl}/api/Products/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale
+              .languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
         }
         final response = await http.get(Uri.parse(url));
 
@@ -197,13 +202,19 @@ class _ProductListState extends State<ProductList> {
       await Future.delayed(const Duration(seconds: 2));
 
       try {
-        var groupRowKey = groupOptions.firstWhere((element) => element.name==selectedGroup).rowKey;
-        var subGroupRowKey = subGroupOptions.firstWhere((element) => element.name==selectedSubGroup).rowKey;
+        var groupRowKey = groupOptions
+            .firstWhere((element) => element.name == selectedGroup)
+            .rowKey;
+        var subGroupRowKey = subGroupOptions
+            .firstWhere((element) => element.name == selectedSubGroup)
+            .rowKey;
         var url =
-            'https://portalapps.azurewebsites.net/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale.languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
+            '${AppConfig.baseUrl}/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale
+            .languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
         if (searchQuery != "") {
           url =
-          'https://portalapps.azurewebsites.net/api/Products/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale.languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
+          '${AppConfig.baseUrl}/api/Products/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale
+              .languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
         }
         final response = await http.get(Uri.parse(url));
 
@@ -252,21 +263,22 @@ class _ProductListState extends State<ProductList> {
       fetchDataGroups();
       fetchDataSubGroups();
       fetchData();
-
     });
   }
+
   // This function will be called when the product is added to the cart
   void addToCart(Product product) {
     setState(() {
       _isAddingToCart = true; // Set the flag to indicate adding to cart
-      _productRowKey=product.rowKey;
+      _productRowKey = product.rowKey;
     });
 
     // Simulate a delay to show the progress indicator
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
-        var cartItem= ShoppingCart.getItems().where((element) => element.rowKey==_productRowKey);
-        if(cartItem.isEmpty){
+        var cartItem = ShoppingCart.getItems().where((element) =>
+        element.rowKey == _productRowKey);
+        if (cartItem.isEmpty) {
           ShoppingCart.addProduct(product);
           _isAddingToCart = false; // Reset the flag after adding to cart
           // Show a snackbar message
@@ -274,14 +286,13 @@ class _ProductListState extends State<ProductList> {
             "${product.name} added to the cart",
             Colors.lightGreen,
           );
-        }else{
+        } else {
           _isAddingToCart = false;
           _showMessage(
             "${product.name} already on the cart",
             Colors.orangeAccent,
           );
         }
-
       });
     });
   }
@@ -295,7 +306,7 @@ class _ProductListState extends State<ProductList> {
   }
 
   void _increaseQuantity(String rowKey) {
-    setState((){
+    setState(() {
       Product proFound;
       try {
         proFound = products.firstWhere((element) => element.rowKey == rowKey);
@@ -307,8 +318,9 @@ class _ProductListState extends State<ProductList> {
       }
     });
   }
+
   void _decreaseQuantity(String rowKey) {
-    setState((){
+    setState(() {
       Product proFound;
       try {
         proFound = products.firstWhere((element) => element.rowKey == rowKey);
@@ -319,14 +331,13 @@ class _ProductListState extends State<ProductList> {
         // Handle the case when no matching element is found
       }
     });
-
   }
 
 
   Future<void> fetchDataGroups() async {
-
     try {
-      var url = 'https://portalapps.azurewebsites.net/api/Groups/LoadAllData?Lan=${currentLocale.languageCode}';
+      var url = '${AppConfig.baseUrl}/api/Groups/LoadAllData?Lan=${currentLocale
+          .languageCode}';
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
@@ -335,23 +346,27 @@ class _ProductListState extends State<ProductList> {
         jsonList.map((json) => Group.fromJson(json)).toList();
         //print(newGroups);
         setState(() {
-
           groupOptions.clear();
-          groupOptions.add(Group(partitionKey: '', rowKey: '', seq: 1, name: '-', description: '', languageID: currentLocale.languageCode, imageURL: '', active: true));
+          groupOptions.add(Group(partitionKey: '',
+              rowKey: '',
+              seq: 1,
+              name: '-',
+              description: '',
+              languageID: currentLocale.languageCode,
+              imageURL: '',
+              active: true));
           groupOptions.addAll(newGroups);
-
         });
       }
-
     } catch (error) {
       print(error);
     }
-
   }
-  Future<void> fetchDataSubGroups() async {
 
+  Future<void> fetchDataSubGroups() async {
     try {
-      var url = 'https://portalapps.azurewebsites.net/api/SubGroups/LoadAllData?Lan=${currentLocale.languageCode}';
+      var url = '${AppConfig.baseUrl}/api/SubGroups/LoadAllData?Lan=${currentLocale
+          .languageCode}';
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
@@ -363,36 +378,56 @@ class _ProductListState extends State<ProductList> {
         //print(newSubGroups.);
         setState(() {
           subGroupOptions.clear();
-          subGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: Localizations.localeOf(context).languageCode, imageURL: '', active: true,groupRowKey: ''));
+          subGroupOptions.add(SubGroup(partitionKey: '',
+              rowKey: '',
+              seq: 1,
+              name: '-',
+              languageID: Localizations
+                  .localeOf(context)
+                  .languageCode,
+              imageURL: '',
+              active: true,
+              groupRowKey: ''));
           subGroupOptions.addAll(newSubGroups);
 
           filteredSubGroupOptions.clear();
-          filteredSubGroupOptions.add(SubGroup(partitionKey: '', rowKey: '', seq: 1, name: '-', languageID: Localizations.localeOf(context).languageCode, imageURL: '', active: true,groupRowKey: ''));
+          filteredSubGroupOptions.add(SubGroup(partitionKey: '',
+              rowKey: '',
+              seq: 1,
+              name: '-',
+              languageID: Localizations
+                  .localeOf(context)
+                  .languageCode,
+              imageURL: '',
+              active: true,
+              groupRowKey: ''));
           filteredSubGroupOptions.addAll(newSubGroups);
         });
       }
-
     } catch (error) {
       print(error);
     }
-
   }
+
+
   Widget _buildGroups() {
     return SizedBox(
-      height: 30, // Adjust the height as needed
+      height: 30,
+      // Adjust the height as needed
       child: ListView(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal, // Change to horizontal
         children: groupOptions.map((Group value) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0), // Add horizontal padding
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+            // Add horizontal padding
             child: FilterOption(
               title: value.name,
               isSelected: selectedGroup == value.name, // Update isSelected
               onTap: () {
                 setState(() {
                   selectedGroup = value.name;
-                  applyGroupFilter(value.name,value.rowKey);
+                  applyGroupFilter(value.name, value.rowKey);
                 });
               },
             ),
@@ -401,6 +436,7 @@ class _ProductListState extends State<ProductList> {
       ),
     );
   }
+
   Widget _buildSubGroups() {
     return SizedBox(
       height: 30, // Adjust the height as needed
@@ -409,7 +445,8 @@ class _ProductListState extends State<ProductList> {
         scrollDirection: Axis.horizontal, // Change to horizontal
         children: filteredSubGroupOptions.map((SubGroup value) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0), // Add horizontal padding
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            // Add horizontal padding
             child: FilterOption(
               title: value.name,
               isSelected: selectedSubGroup == value.name, // Update isSelected
@@ -426,19 +463,20 @@ class _ProductListState extends State<ProductList> {
     );
   }
 
-  void applyGroupFilter(String group,String rowKey) {
+  void applyGroupFilter(String group, String rowKey) {
     setState(() {
-
-      selectedGroup=group;
-      selectedSubGroup='-';
-      filteredSubGroupOptions=group=='-'?subGroupOptions:
-      subGroupOptions.where((element) => element.groupRowKey==rowKey).toList();
+      selectedGroup = group;
+      selectedSubGroup = '-';
+      filteredSubGroupOptions = group == '-' ? subGroupOptions :
+      subGroupOptions.where((element) => element.groupRowKey == rowKey)
+          .toList();
       fetchData();
     });
   }
+
   void applySubGroupFilter(String subGroup) {
     setState(() {
-      selectedSubGroup=subGroup;
+      selectedSubGroup = subGroup;
       fetchData();
     });
   }
@@ -447,14 +485,13 @@ class _ProductListState extends State<ProductList> {
   Widget _buildListItem(BuildContext context, int index) {
     if (index == products.length) {
       if (isLoading) {
-        return (pageNumber==1)? ProgressCustom(
+        return (pageNumber == 1) ? ProgressCustom(
           strokeWidth: 4.0, // Custom stroke width
           size: 600.0, // Custom size
-        ): ProgressCustom();
-
+        ) : ProgressCustom();
       }
-      if(searchQuery!=""&&products.isEmpty){
-        return  ListNoResultFound();
+      if (searchQuery != "" && products.isEmpty) {
+        return ListNoResultFound(onClear: _clearSearch,);
       }
       return const SizedBox();
     }
@@ -467,12 +504,12 @@ class _ProductListState extends State<ProductList> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ProductDetails(product: product),
+              builder: (context) => ProductDetails(product: product),
 
             ),
           );
         },
-        addToCart: ()=> addToCart(product),
+        addToCart: () => addToCart(product),
         showProgressIndicator: _isAddingToCart,
         rowKey: _productRowKey,
         increaseQuantity: _increaseQuantity,
@@ -480,7 +517,6 @@ class _ProductListState extends State<ProductList> {
         layoutNumber: layoutNumber,
       );
     }
-
   }
 
   void _clearSearch() {
@@ -494,10 +530,12 @@ class _ProductListState extends State<ProductList> {
       fetchData();
     });
   }
+
   bool isAuthenticated = false; // Assuming this flag manages user authentication status
 
   // Function to handle the action when the user is not authenticated
-  Future<void> handleAuthenticationAction() async {      // ignore: use_build_context_synchronously
+  Future<void> handleAuthenticationAction() async {
+    // ignore: use_build_context_synchronously
 
     // Implement the action needed when the user is not authenticated
     // For example, show a login dialog or navigate to the authentication screen
@@ -507,7 +545,7 @@ class _ProductListState extends State<ProductList> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     RowKey = prefs.getString('RowKey');
 
-    if(RowKey==null) {
+    if (RowKey == null) {
       // Retrieve other user information using appropriate keys
       showDialog(
         context: context,
@@ -538,12 +576,13 @@ class _ProductListState extends State<ProductList> {
           );
         },
       );
-    }else{
+    } else {
       setState(() {
-        isAuthenticated=true;
+        isAuthenticated = true;
       });
     }
   }
+
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -552,30 +591,33 @@ class _ProductListState extends State<ProductList> {
     });
 
     switch (index) {
-      //ProductLIst
+    //ProductLIst
       case 0:
-        //Navigator.push(context,MaterialPageRoute(builder:(context) => ProductList()));
+      //Navigator.push(context,MaterialPageRoute(builder:(context) => ProductList()));
         break;
       case 1:
       // Navigate to the settings page or perform settings-related actions
-        //Navigator.push(context,MaterialPageRoute(builder:(context) => Profile()));
+      //Navigator.push(context,MaterialPageRoute(builder:(context) => Profile()));
         break;
       case 2:
       // Navigate to the settings page or perform settings-related actions
-        Navigator.push(context,MaterialPageRoute(builder:(context) => Profile()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Profile()));
         break;
     // Add more cases for other items if needed
       default:
         break;
     }
   }
+
   @override
   Widget build(BuildContext context) {
-
     //_changeLanguage(currentLocale);
     // Determine the text direction based on the current locale
     TextDirection textDirection =
-    currentLocale.languageCode.toLowerCase() == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+    currentLocale.languageCode.toLowerCase() == 'ar'
+        ? TextDirection.rtl
+        : TextDirection.ltr;
 
 
     return Directionality(
@@ -585,7 +627,7 @@ class _ProductListState extends State<ProductList> {
 
         appBar: AppBar(
 
-          title:  Text(FlutterI18n.translate(context, "ProductList")  ),
+          title: Text(FlutterI18n.translate(context, "ProductList")),
           actions: [
 
             CartShopIcon(),
@@ -593,16 +635,18 @@ class _ProductListState extends State<ProductList> {
               setState(() {
                 layoutNumber = (layoutNumber == 2 ? 1 : 2);
               });
-            }, icon: Icon(layoutNumber == 2 ? Icons.view_list : Icons.list_alt)),
-            !isAuthenticated? IconButton(
+            },
+                icon: Icon(
+                    layoutNumber == 2 ? Icons.view_list : Icons.list_alt)),
+            !isAuthenticated ? IconButton(
                 onPressed: handleAuthenticationAction,
                 icon: const Icon(Icons.error),
                 color: Colors.deepOrange
-            ):Container(),
+            ) : Container(),
           ],
         ),
-        body:  isPageLoading
-            ? Center(
+        body: isPageLoading
+            ? const Center(
           child: CircularProgressIndicator(), // Display a loading indicator
         )
             : Column(
@@ -621,22 +665,16 @@ class _ProductListState extends State<ProductList> {
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: FlutterI18n.translate(context, "Search") ,
+                  hintText: FlutterI18n.translate(context, "Search"),
                   prefixIcon: const Icon(Icons.search),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: _clearSearch,
-                  )
-                      : null,
+                  suffixIcon: _searchController.text.isNotEmpty ? IconButton(icon: const Icon(Icons.clear), onPressed: _clearSearch,) : null,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                     borderSide: const BorderSide(color: Colors.grey),
                   ),
                   filled: true,
                   fillColor: Colors.grey[200],
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 12.0, horizontal: 16.0),
+                  //contentPadding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
                 ),
                 style: const TextStyle(fontSize: 16.0),
               ),
@@ -658,30 +696,15 @@ class _ProductListState extends State<ProductList> {
                   });
                 },
               ) : RefreshIndicator(
-
                 onRefresh: () async {
-                  // Set _isRefreshing to true to start the refresh process
-                  setState(() {
-                    //_isRefreshing = true;
-                  });
-
-                  // Your refresh logic here
                   await fetchData(); // Example: Fetching data
-
-                  // Simulate a delay to remove the indicator (optional)
                   await Future.delayed(const Duration(milliseconds: 500)); // Adjust duration as needed
-
-                  // Set _isRefreshing to false to indicate the refresh has completed
-                  setState(() {
-                    //_isRefreshing = false;
-                  });
                 },
                 child: ListView.builder(
                   shrinkWrap: true,
                   controller: _scrollController,
                   itemCount: products.length + 1,
                   itemBuilder: (context, index) {
-
                     return _buildListItem(context, index);
                   },
                 ),
@@ -712,7 +735,5 @@ class _ProductListState extends State<ProductList> {
 
       ),
     );
-
-
   }
 }
