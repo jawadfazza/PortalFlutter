@@ -74,7 +74,7 @@ class MyApp extends StatefulWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+                children: const [
                   SizedBox(
                     width: 100,
                     height: 100,
@@ -95,7 +95,7 @@ class MyApp extends StatefulWidget {
     } else {
       return MaterialApp(
         theme: ThemeData(
-          appBarTheme: AppBarTheme(backgroundColor: Colors.blueGrey),
+          appBarTheme: const AppBarTheme(backgroundColor: Colors.blueGrey),
           primaryColor: Colors.blueAccent,
           inputDecorationTheme: InputDecorationTheme(
             border: OutlineInputBorder(

@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopping/Account/LoginPage.dart';
 import 'package:shopping/Account/Models/Account.dart';
-import 'package:shopping/Shop/Products/bottomNavigationBar.dart';
+import 'package:shopping/GlobalTools/bottomNavigationBar.dart';
 import 'package:shopping/main.dart';
 import '../GlobalTools/FormButton.dart';
 import '../GlobalTools/LocalizationManager.dart';
