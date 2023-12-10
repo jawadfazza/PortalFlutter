@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopping/Account/LoginPage.dart';
 import 'package:shopping/Account/Models/Account.dart';
 import 'package:shopping/GlobalTools/bottomNavigationBar.dart';
+import 'package:shopping/Shop/Products/ProductList.dart';
+import 'package:shopping/Shop/Stores/StoreList.dart';
 import 'package:shopping/main.dart';
 import '../GlobalTools/FormButton.dart';
 import '../GlobalTools/LocalizationManager.dart';
@@ -200,7 +202,7 @@ class _ProfileState extends State<Profile> {
     switch (index) {
     //ProductLIst
       case 0:
-        Navigator.push(context,MaterialPageRoute(builder:(context) => MyApp()));
+        Navigator.push(context,MaterialPageRoute(builder:(context) => ProductList()));
         break;
       case 1:
       // Navigate to the settings page or perform settings-related actions
@@ -208,7 +210,7 @@ class _ProfileState extends State<Profile> {
         break;
       case 2:
       // Navigate to the settings page or perform settings-related actions
-        //Navigator.push(context,MaterialPageRoute(builder:(context) => Profile()));
+        Navigator.push(context,MaterialPageRoute(builder:(context) => StoreList()));
         break;
     // Add more cases for other items if needed
       default:

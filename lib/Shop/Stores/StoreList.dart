@@ -137,10 +137,10 @@ class _StoreListState extends State<StoreList> {
         stores.clear();
         var groupRowKey = groupOptions.firstWhere((element) => element.name==selectedGroup).rowKey;
         var url =
-            '${AppConfig.baseUrl}/api/Stores/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale.languageCode}&groupOptions=$groupRowKey';
+            '${AppConfig.baseUrl}/api/Stores/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale.languageCode.toUpperCase()}&groupOptions=$groupRowKey';
         if (searchQuery != "") {
           url =
-          '${AppConfig.baseUrl}/api/Stores/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale.languageCode}&groupOptions=$groupRowKey';
+          '${AppConfig.baseUrl}/api/Stores/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale.languageCode.toUpperCase()}&groupOptions=$groupRowKey';
         }
         final response = await http.get(Uri.parse(url));
 
@@ -185,10 +185,10 @@ class _StoreListState extends State<StoreList> {
       try {
         var groupRowKey = groupOptions.firstWhere((element) => element.name==selectedGroup).rowKey;
         var url =
-            '${AppConfig.baseUrl}/api/Stores/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale.languageCode}&groupOptions=$groupRowKey';
+            '${AppConfig.baseUrl}/api/Stores/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale.languageCode.toUpperCase()}&groupOptions=$groupRowKey';
         if (searchQuery != "") {
           url =
-          '${AppConfig.baseUrl}/api/Stores/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale.languageCode}&groupOptions=$groupRowKey';
+          '${AppConfig.baseUrl}/api/Stores/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale.languageCode.toUpperCase()}&groupOptions=$groupRowKey';
         }
         final response = await http.get(Uri.parse(url));
 
@@ -255,7 +255,7 @@ class _StoreListState extends State<StoreList> {
   Future<void> fetchDataGroups() async {
 
     try {
-      var url = '${AppConfig.baseUrl}/api/Groups/LoadAllData?Lan=${currentLocale.languageCode}';
+      var url = '${AppConfig.baseUrl}/api/Groups/LoadAllData?Lan=${currentLocale.languageCode.toUpperCase()}';
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
@@ -326,7 +326,7 @@ class _StoreListState extends State<StoreList> {
 
       }
       if(searchQuery!=""&&stores.isEmpty){
-        return  ListNoResultFound();
+        return  ListNoResultFound( onClear: _clearSearch,);
       }
       return const SizedBox();
     }
@@ -334,20 +334,18 @@ class _StoreListState extends State<StoreList> {
       final store = stores[index];
 
       return StoreCard(
-
         store: store,
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => StoreDetails(store: store),
-
             ),
           );
         },
 
-        showProgressIndicator: _isAddingToCart,
-        rowKey: _storeRowKey,
+        //showProgressIndicator: _isAddingToCart,
+        //rowKey: _storeRowKey,
 
         layoutNumber: layoutNumber,
       );
@@ -416,7 +414,7 @@ class _StoreListState extends State<StoreList> {
       });
     }
   }
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   void _onItemTapped(int index) {
     setState(() {

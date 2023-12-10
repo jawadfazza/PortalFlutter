@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Store {
   String partitionKey;
   String rowKey;
@@ -6,8 +8,8 @@ class Store {
   String description;
   String location;
   bool active;
-  DateTime openingHours;
-  DateTime closingHours;
+  int openingHours;
+  int closingHours;
   String contactNumber;
   String email;
   String website;
@@ -41,47 +43,47 @@ class Store {
 
   factory Store.fromJson(Map<String, dynamic> json) {
     return Store(
-      partitionKey: json['PartitionKey'] ?? '',
-      rowKey: json['RowKey'] ?? '',
-      seq: json['Seq'] ?? 0,
-      name: json['Name'] ?? '',
-      description: json['Description'] ?? '',
-      location: json['Location'] ?? '',
-      active: json['Active'] ?? false,
-      openingHours: DateTime.parse(json['OpeningHours'] ?? ''),
-      closingHours: DateTime.parse(json['ClosingHours'] ?? ''),
-      contactNumber: json['ContactNumber'] ?? '',
-      email: json['Email'] ?? '',
-      website: json['Website'] ?? '',
-      imageURL: json['ImageURL'] ?? '',
-      rating: json['Rating'] ?? 0.0,
-      numberOfRatings: json['NumberOfRatings'] ?? 0,
-      tags: List<String>.from(json['Tags'] ?? []),
-      longitude: json['Longitude'] ?? 0,
-      latitude: json['Latitude'] ?? 0,
+      partitionKey: json['partitionKey'] ?? '',
+      rowKey: json['rowKey'] ?? '',
+      seq: json['seq'] ?? 0,
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      location: json['location'] ?? '',
+      active: json['active'] ?? false,
+      openingHours: json['openingHours'] ?? 0,
+      closingHours: json['closingHours'] ?? 0,
+      contactNumber: json['contactNumber'] ?? '',
+      email: json['email'] ?? '',
+      website: json['website'] ?? '',
+      imageURL: json['imageURL'] ?? '',
+      rating: json['rating'] != null ? double.parse(json['rating'].toString()) : 0.0,
+      numberOfRatings: json['numberOfRatings'] ?? 0,
+      tags: List<String>.from(json['tags'] ?? []),
+      longitude: json['longitude'] ?? 0,
+      latitude: json['latitude'] ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'PartitionKey': partitionKey,
-      'RowKey': rowKey,
-      'Seq': seq,
-      'Name': name,
-      'Description': description,
-      'Location': location,
-      'Active': active,
-      'OpeningHours': openingHours.toIso8601String(),
-      'ClosingHours': closingHours.toIso8601String(),
-      'ContactNumber': contactNumber,
-      'Email': email,
-      'Website': website,
-      'ImageURL': imageURL,
-      'Rating': rating,
-      'NumberOfRatings': numberOfRatings,
-      'Tags': tags,
-      'Longitude': longitude,
-      'Latitude': latitude,
+      'partitionKey': partitionKey,
+      'rowKey': rowKey,
+      'seq': seq,
+      'name': name,
+      'description': description,
+      'location': location,
+      'active': active,
+      'openingHours': openingHours,
+      'closingHours': closingHours,
+      'contactNumber': contactNumber,
+      'email': email,
+      'website': website,
+      'imageURL': imageURL,
+      'rating': rating,
+      'numberOfRatings': numberOfRatings,
+      'tags': tags,
+      'longitude': longitude,
+      'latitude': latitude,
     };
   }
 }

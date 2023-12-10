@@ -158,11 +158,11 @@ class _ProductListState extends State<ProductList> {
             .rowKey;
         var url =
             'https://portalapps.azurewebsites.net/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale
-            .languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
+            .languageCode.toUpperCase()}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
         if (searchQuery != "") {
           url =
           '${AppConfig.baseUrl}/api/Products/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale
-              .languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
+              .languageCode.toUpperCase()}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
         }
         final response = await http.get(Uri.parse(url));
 
@@ -213,11 +213,11 @@ class _ProductListState extends State<ProductList> {
             .rowKey;
         var url =
             '${AppConfig.baseUrl}/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale
-            .languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
+            .languageCode.toUpperCase()}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
         if (searchQuery != "") {
           url =
           '${AppConfig.baseUrl}/api/Products/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale
-              .languageCode}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
+              .languageCode.toUpperCase()}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
         }
         final response = await http.get(Uri.parse(url));
 
@@ -340,7 +340,7 @@ class _ProductListState extends State<ProductList> {
   Future<void> fetchDataGroups() async {
     try {
       var url = '${AppConfig.baseUrl}/api/Groups/LoadAllData?Lan=${currentLocale
-          .languageCode}';
+          .languageCode.toUpperCase()}';
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
@@ -369,7 +369,7 @@ class _ProductListState extends State<ProductList> {
   Future<void> fetchDataSubGroups() async {
     try {
       var url = '${AppConfig.baseUrl}/api/SubGroups/LoadAllData?Lan=${currentLocale
-          .languageCode}';
+          .languageCode.toUpperCase()}';
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
@@ -586,7 +586,7 @@ class _ProductListState extends State<ProductList> {
     }
   }
 
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
