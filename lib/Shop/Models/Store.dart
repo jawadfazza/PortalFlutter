@@ -4,6 +4,7 @@ class Store {
   String partitionKey;
   String rowKey;
   int seq;
+  String groupRowKey;
   String name;
   String description;
   String location;
@@ -23,6 +24,7 @@ class Store {
   Store({
     required this.partitionKey,
     required this.rowKey,
+    required this.groupRowKey,
     required this.seq,
     required this.name,
     required this.description,
@@ -45,6 +47,7 @@ class Store {
     return Store(
       partitionKey: json['partitionKey'] ?? '',
       rowKey: json['rowKey'] ?? '',
+      groupRowKey: json['groupRowKey'] ?? '',
       seq: json['seq'] ?? 0,
       name: json['name'] ?? '',
       description: json['description'] ?? '',
@@ -69,6 +72,7 @@ class Store {
       'partitionKey': partitionKey,
       'rowKey': rowKey,
       'seq': seq,
+      'groupRowKey': groupRowKey,
       'name': name,
       'description': description,
       'location': location,

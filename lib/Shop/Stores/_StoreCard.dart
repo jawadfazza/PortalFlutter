@@ -7,7 +7,7 @@ class StoreCard extends StatelessWidget {
   final VoidCallback onTap;
   final int layoutNumber;
 
-  StoreCard({
+  const StoreCard({
     required this.store,
     required this.onTap,
     required this.layoutNumber,

@@ -10,11 +10,9 @@ import 'package:shopping/Shop/Models/Group.dart';
 import 'package:shopping/Shop/Models/Product.dart';
 import 'package:shopping/Shop/Models/Store.dart';
 import 'package:shopping/Shop/Models/SubGroup.dart';
-import 'package:shopping/GlobalTools/bottomNavigationBar.dart';
-import 'package:shopping/Shop/Products/ProductList.dart';
-import 'package:shopping/Shop/Stores/StoreProductList.dart';
-import 'package:shopping/Shop/Stores/_StoreCard.dart';
-import 'package:shopping/Shop/Stores/StoreDetails.dart';
+import 'package:shopping/Shop/Products/_ProductCard.dart';
+import 'package:shopping/Shop/Products/ProductDetails.dart';
+import 'package:shopping/Shop/Stores/StoreList.dart';
 import '../../GlobalTools/AppConfig.dart';
 import '../../GlobalTools/ErrorScreen.dart';
 import '../../GlobalTools/LocalizationManager.dart';
@@ -23,27 +21,27 @@ import '../Groups/FilterOption.dart';
 import '../../GlobalTools/ListNoResultFound.dart';
 import '../../GlobalTools/ProgressCustome.dart';
 import '../Cart/_CartShopIcon.dart';
+import '../../GlobalTools/bottomNavigationBar.dart';
 
-
-
-
-
-
-class StoreList extends StatefulWidget {
+class StoreProductList extends StatefulWidget {
+  final Store store;
+  const StoreProductList({
+    required this.store,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
-  _StoreListState createState() =>
-      _StoreListState();
+  _StoreProductListState createState() =>
+      _StoreProductListState();
 }
 
-class _StoreListState extends State<StoreList> {
+class _StoreProductListState extends State<StoreProductList> {
+  String storeRowKey='';
 
   Locale currentLocale = LocalizationManager().getCurrentLocale();
-
   int pageSize = 20;
   int pageNumber = 1;
-  int layoutNumber=2;
+  int layoutNumber = 2;
 
 
   bool isLoading = false;
@@ -55,17 +53,18 @@ class _StoreListState extends State<StoreList> {
 
   String searchQuery = '';
   String errorMessage = '';
-  late String _storeRowKey = '';
-  String? RowKey ='';
-  String selectedGroup='-'; // No default selected group // Default selected group filter
+  late String _productRowKey = '';
+  String? accountRowKey = '';
+  String selectedGroup = '-'; // No default selected group // Default selected group filter
+  String selectedSubGroup = '-'; // No default selected group // Default selected group filter
 
 
+  static List<Product> products = [];
+  List<Product> filteredProducts = [];
+  //static List<Group> groupOptions = []; // List of grouping options
+  static List<SubGroup> subGroupOptions = [];
 
-  static List<Store> stores = [];
-  List<Store> filteredStores = [];
-  static List<Group> groupOptions=[] ; // List of grouping options
-  static List<SubGroup> subGroupOptions=[] ;
-
+  static List<SubGroup> filteredSubGroupOptions = [];
 
   final TextEditingController _searchController = TextEditingController();
   ScrollController _scrollController = ScrollController();
@@ -93,18 +92,29 @@ class _StoreListState extends State<StoreList> {
     handleAuthenticationAction();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    groupOptions.add(Group(
+
+
+    filteredSubGroupOptions.add(SubGroup(
       partitionKey: '',
       rowKey: '',
       seq: 1,
       name: '-',
-      description: '',
       languageID: currentLocale.languageCode,
       imageURL: '',
       active: true,
+      groupRowKey: '',
     ));
-    fetchDataGroups();
-
+    subGroupOptions.add(SubGroup(
+      partitionKey: '',
+      rowKey: '',
+      seq: 1,
+      name: '-',
+      languageID: currentLocale.languageCode,
+      imageURL: '',
+      active: true,
+      groupRowKey: '',
+    ));
+    fetchDataSubGroups();
     fetchData().then((_) {
       // Set isPageLoading to false after fetchData completes
       setState(() {
@@ -112,7 +122,6 @@ class _StoreListState extends State<StoreList> {
       });
     });
   }
-
 
 
   @override
@@ -123,35 +132,38 @@ class _StoreListState extends State<StoreList> {
   }
 
   Future<void> fetchData() async {
-
-
     if (!isLoading) {
       setState(() {
         pageSize = 20;
         pageNumber = 1;
-        isLoading= true;
+        isLoading = true;
 
         hasError = false;
         errorMessage = '';
       });
       try {
-        stores.clear();
-        var groupRowKey = groupOptions.firstWhere((element) => element.name==selectedGroup).rowKey;
+        products.clear();
+
+        var subGroupRowKey = subGroupOptions
+            .firstWhere((element) => element.name == selectedSubGroup)
+            .rowKey;
         var url =
-            '${AppConfig.baseUrl}/api/Stores/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale.languageCode.toUpperCase()}&groupOptions=$groupRowKey';
+            'https://portalapps.azurewebsites.net/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale
+            .languageCode.toUpperCase()}&groupOptions=${widget.store.groupRowKey}&subGroupOptions=$subGroupRowKey';
         if (searchQuery != "") {
           url =
-          '${AppConfig.baseUrl}/api/Stores/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale.languageCode.toUpperCase()}&groupOptions=$groupRowKey';
+          '${AppConfig.baseUrl}/api/Products/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale
+              .languageCode.toUpperCase()}&groupOptions=${widget.store.groupRowKey}&subGroupOptions=$subGroupRowKey';
         }
         final response = await http.get(Uri.parse(url));
 
         if (response.statusCode == 200) {
           final jsonResponse = json.decode(response.body);
           final List<dynamic> jsonList = jsonResponse as List<dynamic>;
-          final List<Store> newStores =
-          jsonList.map((json) => Store.fromJson(json)).toList();
+          final List<Product> newProducts =
+          jsonList.map((json) => Product.fromJson(json)).toList();
           setState(() {
-            stores.addAll(newStores);
+            products.addAll(newProducts);
             isLoading = false;
           });
         } else {
@@ -184,22 +196,26 @@ class _StoreListState extends State<StoreList> {
       await Future.delayed(const Duration(seconds: 2));
 
       try {
-        var groupRowKey = groupOptions.firstWhere((element) => element.name==selectedGroup).rowKey;
+        var subGroupRowKey = subGroupOptions
+            .firstWhere((element) => element.name == selectedSubGroup)
+            .rowKey;
         var url =
-            '${AppConfig.baseUrl}/api/Stores/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale.languageCode.toUpperCase()}&groupOptions=$groupRowKey';
+            '${AppConfig.baseUrl}/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale
+            .languageCode.toUpperCase()}&groupOptions=${widget.store.groupRowKey}&subGroupOptions=$subGroupRowKey';
         if (searchQuery != "") {
           url =
-          '${AppConfig.baseUrl}/api/Stores/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale.languageCode.toUpperCase()}&groupOptions=$groupRowKey';
+          '${AppConfig.baseUrl}/api/Products/LoadPartialDataWithSearch?pageSize=$pageSize&pageNumber=$pageNumber&searchQuery=$searchQuery&Lan=${currentLocale
+              .languageCode.toUpperCase()}&groupOptions=${widget.store.groupRowKey}&subGroupOptions=$subGroupRowKey';
         }
         final response = await http.get(Uri.parse(url));
 
         if (response.statusCode == 200) {
           final jsonResponse = json.decode(response.body);
           final List<dynamic> jsonList = jsonResponse as List<dynamic>;
-          final List<Store> newStores =
-          jsonList.map((json) => Store.fromJson(json)).toList();
+          final List<Product> newProducts =
+          jsonList.map((json) => Product.fromJson(json)).toList();
           setState(() {
-            stores.addAll(newStores);
+            products.addAll(newProducts);
             isLoading = false;
           });
         } else {
@@ -235,13 +251,41 @@ class _StoreListState extends State<StoreList> {
     setState(() {
       FlutterI18n.refresh(context, newLocale);
       LocalizationManager().setCurrentLocale(newLocale);
-      fetchDataGroups();
+      fetchDataSubGroups();
       fetchData();
-
     });
   }
-  // This function will be called when the store is added to the cart
 
+  // This function will be called when the product is added to the cart
+  void addToCart(Product product) {
+    setState(() {
+      _isAddingToCart = true; // Set the flag to indicate adding to cart
+      _productRowKey = product.rowKey;
+    });
+
+    // Simulate a delay to show the progress indicator
+    Future.delayed(const Duration(seconds: 2), () {
+      setState(() {
+        var cartItem = ShoppingCart.getItems().where((element) =>
+        element.rowKey == _productRowKey);
+        if (cartItem.isEmpty) {
+          ShoppingCart.addProduct(product);
+          _isAddingToCart = false; // Reset the flag after adding to cart
+          // Show a snackbar message
+          _showMessage(
+            "${product.name} added to the cart",
+            Colors.lightGreen,
+          );
+        } else {
+          _isAddingToCart = false;
+          _showMessage(
+            "${product.name} already on the cart",
+            Colors.orangeAccent,
+          );
+        }
+      });
+    });
+  }
 
   void _showMessage(String message, Color messageColor) {
     final snackBar = SnackBar(
@@ -251,50 +295,97 @@ class _StoreListState extends State<StoreList> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  void _increaseQuantity(String rowKey) {
+    setState(() {
+      Product proFound;
+      try {
+        proFound = products.firstWhere((element) => element.rowKey == rowKey);
+        if (proFound.productQuantity > proFound.cartQuantity) {
+          proFound.cartQuantity++;
+        }
+      } catch (e) {
+        // Handle the case when no matching element is found
+      }
+    });
+  }
 
+  void _decreaseQuantity(String rowKey) {
+    setState(() {
+      Product proFound;
+      try {
+        proFound = products.firstWhere((element) => element.rowKey == rowKey);
+        if (proFound.cartQuantity > 1) {
+          proFound.cartQuantity--;
+        }
+      } catch (e) {
+        // Handle the case when no matching element is found
+      }
+    });
+  }
 
-  Future<void> fetchDataGroups() async {
-
+  Future<void> fetchDataSubGroups() async {
     try {
-      var url = '${AppConfig.baseUrl}/api/Groups/LoadAllData?Lan=${currentLocale.languageCode.toUpperCase()}';
+      var url = '${AppConfig.baseUrl}/api/SubGroups/LoadAllData?Lan=${currentLocale.languageCode.toUpperCase()}';
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
         final List<dynamic> jsonList = jsonResponse as List<dynamic>;
-        final List<Group> newGroups =
-        jsonList.map((json) => Group.fromJson(json)).toList();
-        //print(newGroups);
+        final List<SubGroup> newSubGroups =
+        jsonList.map((json) => SubGroup.fromJson(json)).toList();
+        newSubGroups.sort((a, b) => a.name.compareTo(b.name));
+
+        //print(newSubGroups.);
         setState(() {
+          subGroupOptions.clear();
+          subGroupOptions.add(SubGroup(partitionKey: '',
+              rowKey: '',
+              seq: 1,
+              name: '-',
+              languageID: Localizations
+                  .localeOf(context)
+                  .languageCode,
+              imageURL: '',
+              active: true,
+              groupRowKey: ''));
+          subGroupOptions.addAll(newSubGroups.where((element) => element.groupRowKey==widget.store.groupRowKey).toList());
 
-          groupOptions.clear();
-          groupOptions.add(Group(partitionKey: '', rowKey: '', seq: 1, name: '-', description: '', languageID: currentLocale.languageCode, imageURL: '', active: true));
-          groupOptions.addAll(newGroups);
-
+          filteredSubGroupOptions.clear();
+          filteredSubGroupOptions.add(SubGroup(partitionKey: '',
+              rowKey: '',
+              seq: 1,
+              name: '-',
+              languageID: Localizations
+                  .localeOf(context)
+                  .languageCode,
+              imageURL: '',
+              active: true,
+              groupRowKey: ''));
+          filteredSubGroupOptions.addAll(newSubGroups.where((element) => element.groupRowKey==widget.store.groupRowKey).toList());
         });
       }
-
     } catch (error) {
       print(error);
     }
-
   }
 
-  Widget _buildGroups() {
+
+  Widget _buildSubGroups() {
     return SizedBox(
       height: 30, // Adjust the height as needed
       child: ListView(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal, // Change to horizontal
-        children: groupOptions.map((Group value) {
+        children: filteredSubGroupOptions.map((SubGroup value) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0), // Add horizontal padding
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            // Add horizontal padding
             child: FilterOption(
               title: value.name,
-              isSelected: selectedGroup == value.name, // Update isSelected
+              isSelected: selectedSubGroup == value.name, // Update isSelected
               onTap: () {
                 setState(() {
-                  selectedGroup = value.name;
-                  applyGroupFilter(value.name,value.rowKey);
+                  selectedSubGroup = value.name;
+                  applySubGroupFilter(value.name);
                 });
               },
             ),
@@ -304,54 +395,60 @@ class _StoreListState extends State<StoreList> {
     );
   }
 
-
-  void applyGroupFilter(String group,String rowKey) {
+  void applyGroupFilter(String group, String rowKey) {
     setState(() {
-
-      selectedGroup=group;
-
-      subGroupOptions.where((element) => element.groupRowKey==rowKey).toList();
+      selectedGroup = group;
+      selectedSubGroup = '-';
+      filteredSubGroupOptions = group == '-' ? subGroupOptions :
+      subGroupOptions.where((element) => element.groupRowKey == rowKey)
+          .toList();
       fetchData();
     });
   }
 
+  void applySubGroupFilter(String subGroup) {
+    setState(() {
+      selectedSubGroup = subGroup;
+      fetchData();
+    });
+  }
 
-  // Add this method to your _StoreListState class
+  // Add this method to your _ProductListState class
   Widget _buildListItem(BuildContext context, int index) {
-    if (index == stores.length) {
+    if (index == products.length) {
       if (isLoading) {
-        return (pageNumber==1)? ProgressCustom(
+        return (pageNumber == 1) ? ProgressCustom(
           strokeWidth: 4.0, // Custom stroke width
           size: 600.0, // Custom size
-        ): ProgressCustom();
-
+        ) : ProgressCustom();
       }
-      if(searchQuery!=""&&stores.isEmpty){
-        return  ListNoResultFound( onClear: _clearSearch,);
+      if (searchQuery != "" && products.isEmpty) {
+        return ListNoResultFound(onClear: _clearSearch,);
       }
       return const SizedBox();
     }
     else {
-      final store = stores[index];
+      final product = products[index];
 
-      return StoreCard(
-        store: store,
+      return ProductCard(
+        product: product,
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => StoreProductList(store: store),
+              builder: (context) => ProductDetails(product: product),
+
             ),
           );
         },
-
-        //showProgressIndicator: _isAddingToCart,
-        //rowKey: _storeRowKey,
-
+        addToCart: () => addToCart(product),
+        showProgressIndicator: _isAddingToCart,
+        rowKey: _productRowKey,
+        increaseQuantity: _increaseQuantity,
+        decreaseQuantity: _decreaseQuantity,
         layoutNumber: layoutNumber,
       );
     }
-
   }
 
   void _clearSearch() {
@@ -361,14 +458,16 @@ class _StoreListState extends State<StoreList> {
       // Add other necessary operations related to clearing the search here
       pageSize = 20;
       pageNumber += 1;
-      stores.clear();
+      products.clear();
       fetchData();
     });
   }
+
   bool isAuthenticated = false; // Assuming this flag manages user authentication status
 
   // Function to handle the action when the user is not authenticated
-  Future<void> handleAuthenticationAction() async {      // ignore: use_build_context_synchronously
+  Future<void> handleAuthenticationAction() async {
+    // ignore: use_build_context_synchronously
 
     // Implement the action needed when the user is not authenticated
     // For example, show a login dialog or navigate to the authentication screen
@@ -376,9 +475,9 @@ class _StoreListState extends State<StoreList> {
     // For demonstration purposes, let's show a simple dialog
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    RowKey = prefs.getString('RowKey');
+    accountRowKey = prefs.getString('RowKey');
 
-    if(RowKey==null) {
+    if (accountRowKey == null) {
       // Retrieve other user information using appropriate keys
       showDialog(
         context: context,
@@ -409,13 +508,14 @@ class _StoreListState extends State<StoreList> {
           );
         },
       );
-    }else{
+    } else {
       setState(() {
-        isAuthenticated=true;
+        isAuthenticated = true;
       });
     }
   }
-  int _selectedIndex = 1;
+
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -423,30 +523,33 @@ class _StoreListState extends State<StoreList> {
     });
 
     switch (index) {
-      //StoreLIst
+    //ProductLIst
       case 0:
-        Navigator.push(context,MaterialPageRoute(builder:(context) => ProductList()));
+      //Navigator.push(context,MaterialPageRoute(builder:(context) => ProductList()));
         break;
       case 1:
       // Navigate to the settings page or perform settings-related actions
-        //Navigator.push(context,MaterialPageRoute(builder:(context) => Profile()));
+      Navigator.push(context,MaterialPageRoute(builder:(context) => StoreList()));
         break;
       case 2:
       // Navigate to the settings page or perform settings-related actions
-        Navigator.push(context,MaterialPageRoute(builder:(context) => Profile()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Profile()));
         break;
     // Add more cases for other items if needed
       default:
         break;
     }
   }
+
   @override
   Widget build(BuildContext context) {
-
     //_changeLanguage(currentLocale);
     // Determine the text direction based on the current locale
     TextDirection textDirection =
-    currentLocale.languageCode.toLowerCase() == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+    currentLocale.languageCode.toLowerCase() == 'ar'
+        ? TextDirection.rtl
+        : TextDirection.ltr;
 
 
     return Directionality(
@@ -456,7 +559,7 @@ class _StoreListState extends State<StoreList> {
 
         appBar: AppBar(
 
-          title:  Text(FlutterI18n.translate(context, "StoreList")  ),
+          title: Text(FlutterI18n.translate(context, "ProductList")),
           actions: [
 
             CartShopIcon(),
@@ -464,16 +567,18 @@ class _StoreListState extends State<StoreList> {
               setState(() {
                 layoutNumber = (layoutNumber == 2 ? 1 : 2);
               });
-            }, icon: Icon(layoutNumber == 2 ? Icons.view_list : Icons.list_alt)),
-            !isAuthenticated? IconButton(
+            },
+                icon: Icon(
+                    layoutNumber == 2 ? Icons.view_list : Icons.list_alt)),
+            !isAuthenticated ? IconButton(
                 onPressed: handleAuthenticationAction,
                 icon: const Icon(Icons.error),
                 color: Colors.deepOrange
-            ):Container(),
+            ) : Container(),
           ],
         ),
-        body:  isPageLoading
-            ? Center(
+        body: isPageLoading
+            ? const Center(
           child: CircularProgressIndicator(), // Display a loading indicator
         )
             : Column(
@@ -487,35 +592,29 @@ class _StoreListState extends State<StoreList> {
                     searchQuery = value.trim();
                     pageSize = 20;
                     pageNumber += 1;
-                    stores.clear();
+                    products.clear();
                     fetchData();
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: FlutterI18n.translate(context, "Search") ,
+                  hintText: FlutterI18n.translate(context, "Search"),
                   prefixIcon: const Icon(Icons.search),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: _clearSearch,
-                  )
-                      : null,
+                  suffixIcon: _searchController.text.isNotEmpty ? IconButton(icon: const Icon(Icons.clear), onPressed: _clearSearch,) : null,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                     borderSide: const BorderSide(color: Colors.grey),
                   ),
                   filled: true,
                   fillColor: Colors.grey[200],
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 12.0, horizontal: 16.0),
+                  //contentPadding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
                 ),
                 style: const TextStyle(fontSize: 16.0),
               ),
             ),
-            const SizedBox(height: 10),
-            _buildGroups(),
-            const SizedBox(height: 10),
 
+            const SizedBox(height: 10),
+            _buildSubGroups(),
+            const SizedBox(height: 10),
 
             Expanded(
               child: hasError ? ErrorScreen(errorMessage: errorMessage,
@@ -523,35 +622,20 @@ class _StoreListState extends State<StoreList> {
                   setState(() {
                     hasError = false;
                     errorMessage = '';
-                    stores.clear();
+                    products.clear();
                     fetchData();
                   });
                 },
               ) : RefreshIndicator(
-
                 onRefresh: () async {
-                  // Set _isRefreshing to true to start the refresh process
-                  setState(() {
-                    //_isRefreshing = true;
-                  });
-
-                  // Your refresh logic here
                   await fetchData(); // Example: Fetching data
-
-                  // Simulate a delay to remove the indicator (optional)
                   await Future.delayed(const Duration(milliseconds: 500)); // Adjust duration as needed
-
-                  // Set _isRefreshing to false to indicate the refresh has completed
-                  setState(() {
-                    //_isRefreshing = false;
-                  });
                 },
                 child: ListView.builder(
                   shrinkWrap: true,
                   controller: _scrollController,
-                  itemCount: stores.length + 1,
+                  itemCount: products.length + 1,
                   itemBuilder: (context, index) {
-
                     return _buildListItem(context, index);
                   },
                 ),
@@ -582,7 +666,5 @@ class _StoreListState extends State<StoreList> {
 
       ),
     );
-
-
   }
 }
