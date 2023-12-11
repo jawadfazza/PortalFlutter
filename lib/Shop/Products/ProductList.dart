@@ -414,25 +414,50 @@ class _ProductListState extends State<ProductList> {
 
 
   Widget _buildGroups() {
-    return SizedBox(
-      height: 30,
-      // Adjust the height as needed
-      child: ListView(
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal, // Change to horizontal
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 2),
+      child: Row(
         children: groupOptions.map((Group value) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5.0),
-            // Add horizontal padding
-            child: FilterOption(
-              title: value.name,
-              isSelected: selectedGroup == value.name, // Update isSelected
-              onTap: () {
-                setState(() {
-                  selectedGroup = value.name;
-                  applyGroupFilter(value.name, value.rowKey);
-                });
-              },
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedGroup = value.name;
+                applyGroupFilter(value.name,value.rowKey);
+              });
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: selectedGroup == value.name
+                    ? Colors.blue
+                    : Colors.grey[300],
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: selectedGroup == value.name
+                      ? Colors.blue
+                      : Colors.grey[300]!,
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 3,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Text(
+                value.name,
+                style: TextStyle(
+                  color: selectedGroup == value.name
+                      ? Colors.white
+                      : Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
             ),
           );
         }).toList(),
@@ -441,24 +466,50 @@ class _ProductListState extends State<ProductList> {
   }
 
   Widget _buildSubGroups() {
-    return SizedBox(
-      height: 30, // Adjust the height as needed
-      child: ListView(
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal, // Change to horizontal
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 1),
+      child: Row(
         children: filteredSubGroupOptions.map((SubGroup value) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            // Add horizontal padding
-            child: FilterOption(
-              title: value.name,
-              isSelected: selectedSubGroup == value.name, // Update isSelected
-              onTap: () {
-                setState(() {
-                  selectedSubGroup = value.name;
-                  applySubGroupFilter(value.name);
-                });
-              },
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedSubGroup = value.name;
+                applySubGroupFilter(value.name);
+              });
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: selectedSubGroup == value.name
+                    ? Colors.blue
+                    : Colors.grey[300],
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: selectedSubGroup == value.name
+                      ? Colors.blue
+                      : Colors.grey[300]!,
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 3,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Text(
+                value.name,
+                style: TextStyle(
+                  color: selectedSubGroup == value.name
+                      ? Colors.white
+                      : Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
             ),
           );
         }).toList(),
@@ -682,12 +733,8 @@ class _ProductListState extends State<ProductList> {
                 style: const TextStyle(fontSize: 16.0),
               ),
             ),
-            const SizedBox(height: 10),
             _buildGroups(),
-            const SizedBox(height: 10),
             _buildSubGroups(),
-            const SizedBox(height: 10),
-
             Expanded(
               child: hasError ? ErrorScreen(errorMessage: errorMessage,
                 onRetry: () {

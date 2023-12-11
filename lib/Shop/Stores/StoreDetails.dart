@@ -7,14 +7,13 @@ import 'package:shopping/Shop/Models/Store.dart';
 
 class StoreDetails extends StatefulWidget {
   final Store store;
-  StoreDetails({required this.store});
+  const StoreDetails({super.key, required this.store});
 
   @override
   _StoreDetailsState createState() => _StoreDetailsState();
 }
 
 class _StoreDetailsState extends State<StoreDetails> {
-  int _quantity = 1;
 
   var languageCode = "";
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../Models/Product.dart';
+import 'ImageGalleryPopup.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -31,7 +32,7 @@ class ProductCard extends StatelessWidget {
     );
     return GestureDetector(
       onTap: onTap,
-      child:layoutNumber==1? Card(
+      child:layoutNumber==1?Card(
         elevation: 3,
         margin: const EdgeInsets.all(5),
         shape: RoundedRectangleBorder(
@@ -60,7 +61,6 @@ class ProductCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      
                       Expanded(
                         child: Text(
                           product.name,
@@ -75,6 +75,11 @@ class ProductCard extends StatelessWidget {
                         icon: showProgressIndicator && product.rowKey == rowKey
                             ? const CircularProgressIndicator()
                             : const Icon(Icons.add_shopping_cart),
+                        color: Colors.green,
+                      ),
+                      IconButton(
+                        onPressed: addToCart,
+                         icon: const Icon(Icons.image_search_rounded),
                         color: Colors.green,
                       ),
                     ],
@@ -125,6 +130,7 @@ class ProductCard extends StatelessWidget {
                       ),
                     ],
                   ),
+
                 ],
               ),
             ),
@@ -195,6 +201,7 @@ class ProductCard extends StatelessWidget {
                               decreaseQuantity(product.rowKey);
                             },
                           ),
+
                           Text(
                             '${product.cartQuantity}',
                             style: const TextStyle(
@@ -216,13 +223,37 @@ class ProductCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            IconButton(
-              onPressed: addToCart,
-              icon: showProgressIndicator && product.rowKey == rowKey
-                  ? const CircularProgressIndicator()
-                  : const Icon(Icons.add_shopping_cart),
-              color: Colors.green,
+            Column(
+              children: [
+                IconButton(
+                  onPressed: addToCart,
+                  icon: showProgressIndicator && product.rowKey == rowKey
+                      ? const CircularProgressIndicator()
+                      : const Icon(Icons.add_shopping_cart),
+                  color: Colors.green,
+                ),
+                IconButton(
+                  onPressed: () {
+                    showDialog(
+
+                      context: context,
+                      builder: (BuildContext context) {
+                        return ImageGalleryPopup(images: [product.imageURL,
+                          product.imageURL,
+                          product.imageURL,
+                          product.imageURL,
+                          product.imageURL,
+                          product.imageURL,
+                        ]);
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.image_search_rounded),
+                  color: Colors.green,
+                ),
+              ],
             ),
+
           ],
         ),
       ),

@@ -4,6 +4,7 @@ import 'package:shopping/GlobalTools/ProgressCustome.dart';
 import 'package:shopping/Shop/Cart/CartList.dart';
 import 'package:shopping/Shop/Cart/_CartShopIcon.dart';
 import 'package:shopping/Shop/Models/Product.dart';
+import '../../GlobalTools/LocalizationManager.dart';
 
 class ProductDetails extends StatefulWidget {
   final Product product;
@@ -14,9 +15,9 @@ class ProductDetails extends StatefulWidget {
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
-  int _quantity = 1;
 
-  var languageCode ="";
+  Locale currentLocale = LocalizationManager().getCurrentLocale();
+  int _quantity = 1;
 
   void _increaseQuantity(int maxQuantity) {
     setState(() {
@@ -39,11 +40,8 @@ class _ProductDetailsState extends State<ProductDetails> {
   @override
   Widget build(BuildContext context) {
     widget.product.cartQuantity=_quantity;
-    if (languageCode == "") {
-      languageCode = ModalRoute.of(context)?.settings.arguments as String;
-    }
     // Determine the text direction based on the current locale
-    TextDirection textDirection = languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+    TextDirection textDirection =  currentLocale.languageCode.toLowerCase() == 'ar' ? TextDirection.rtl : TextDirection.ltr;
 
     return Directionality(
       textDirection: textDirection,
