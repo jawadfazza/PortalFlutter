@@ -41,5 +41,21 @@
 
   "Home": "الرئيسية",
   "Shops": "المتاجر",
-  "Profile": "حسابك"
+  "Profile": "حسابك",
+
+  "ProductInfo": "معلومات المنتج",
+  "Name": "الاسم",
+  "Description": "الوصف",
+  "Price": "السعر",
+  "Quantity": "الكمية",
+  "ProductAvailability": "توافر المنتج",
+  "ProductReviews": "آراء المنتج",
+  "ProductSpecifications": "مواصفات المنتج",
+  "ProductBrand": "العلامة التجارية",
+  "ProductWeight": "وزن المنتج",
+  "ProductDimensions": "أبعاد المنتج",
+  "SaveChanges": "حفظ التغييرات"
+
+
+
 }

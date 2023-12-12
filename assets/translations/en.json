@@ -41,6 +41,19 @@
 
   "Home": "Home",
   "Shops": "Stores",
-  "Profile": "Profile"
+  "Profile": "Profile",
+
+  "ProductInfo": "Product Info",
+  "Name": "Name",
+  "Description": "Description",
+  "Price": "Price",
+  "Quantity": "Quantity",
+  "ProductAvailability": "Product Availability",
+  "ProductReviews": "Product Reviews",
+  "ProductSpecifications": "Product Specifications",
+  "ProductBrand": "Product Brand",
+  "ProductWeight": "Product Weight",
+  "ProductDimensions": "Product Dimensions",
+  "SaveChanges": "Save Changes"
 }
 

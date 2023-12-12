@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shopping/Shop/Stores/_ProductInfo.dart';
 import '../Models/Product.dart';
 import 'ImageGalleryPopup.dart';
 
@@ -226,6 +227,21 @@ class ProductCard extends StatelessWidget {
             Column(
               children: [
                 IconButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                          // Adjust the dialog size and other properties as needed
+                          child: ProductInfo(product: product),
+                        );
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.edit),
+                  color: Colors.green,
+                ),
+                IconButton(
                   onPressed: addToCart,
                   icon: showProgressIndicator && product.rowKey == rowKey
                       ? const CircularProgressIndicator()
@@ -235,7 +251,6 @@ class ProductCard extends StatelessWidget {
                 IconButton(
                   onPressed: () {
                     showDialog(
-
                       context: context,
                       builder: (BuildContext context) {
                         return ImageGalleryPopup(images: [product.imageURL,

@@ -2,6 +2,7 @@ class Product {
   String partitionKey;
   String rowKey;
   String groupRowKey;
+  String subGroupRowKey;
   String storeRowKey;
   int seq;
   String name; // Added property for product name
@@ -25,6 +26,7 @@ class Product {
     required this.partitionKey,
     required this.rowKey,
     required this.groupRowKey,
+    required this.subGroupRowKey,
     required this.storeRowKey,
     required this.seq,
     required this.imageURL,
@@ -50,6 +52,7 @@ class Product {
       partitionKey: json['partitionKey'] ?? '',
       rowKey: json['rowKey'] ?? '',
       groupRowKey: json['groupRowKey'] ?? '',
+      subGroupRowKey: json['subGroupRowKey'] ?? '',
       storeRowKey: json['storeRowKey'] ?? '',
       seq: json['seq'] ?? 0,
       imageURL: json['imageURL'] ?? '',
@@ -77,6 +80,7 @@ class Product {
       'PartitionKey': partitionKey,
       'RowKey': rowKey,
       'GroupRowKey': groupRowKey,
+      'SubGroupRowKey': subGroupRowKey,
       'StoreRowKey': storeRowKey,
       'Seq': seq,
       'ImageURL': imageURL,
