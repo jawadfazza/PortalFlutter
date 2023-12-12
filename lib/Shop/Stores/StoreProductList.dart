@@ -4,6 +4,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopping/Account/LoginPage.dart';
 import 'package:shopping/Account/Profile.dart';
+import 'package:shopping/GlobalTools/ImageUploadWidget.dart';
 import 'package:shopping/Shop/Cart/CartList.dart';
 import 'package:http/http.dart' as http;
 import 'package:shopping/Shop/Models/Group.dart';
@@ -420,9 +421,6 @@ class _StoreProductListState extends State<StoreProductList> {
     );
   }
 
-
-
-
   void applyGroupFilter(String group, String rowKey) {
     setState(() {
       selectedGroup = group;
@@ -465,7 +463,6 @@ class _StoreProductListState extends State<StoreProductList> {
             context,
             MaterialPageRoute(
               builder: (context) => ProductDetails(product: product),
-
             ),
           );
         },
@@ -614,11 +611,13 @@ class _StoreProductListState extends State<StoreProductList> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                width: double.infinity,
+
+                //width: double.infinity,
                 height: 150,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(5),
                   boxShadow: [
+
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 2,
@@ -627,12 +626,31 @@ class _StoreProductListState extends State<StoreProductList> {
                     ),
                   ],
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    widget.store.imageURL,
-                    fit: BoxFit.fill,
-                  ),
+                child: Stack(
+                  fit: StackFit.expand,
+                  alignment: Alignment.bottomLeft ,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        widget.store.imageURL,
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.cloud_upload_outlined,color: Colors.green),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              child: ImageUploadWidget()
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),
