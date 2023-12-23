@@ -149,7 +149,7 @@ class _StoreProductListState extends State<StoreProductList> {
             .firstWhere((element) => element.name == selectedSubGroup)
             .rowKey;
         var url =
-            'https://portalapps.azurewebsites.net/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale
+            '${AppConfig.baseUrl}/api/Products/LoadPartialData?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale
             .languageCode.toUpperCase()}&groupOptions=${widget.store.groupRowKey}&subGroupOptions=$subGroupRowKey';
         if (searchQuery != "") {
           url =

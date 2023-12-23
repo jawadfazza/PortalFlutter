@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+
+import 'AppConfig.dart';
 
 class ImageUploadWidget extends StatefulWidget {
   @override
@@ -17,6 +20,26 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
     setState(() {
       _imageFile = pickedFile;
     });
+  }
+
+  Future<void> _uploadImage(File imageFile) async {
+    final uri = Uri.parse('${AppConfig.baseUrl}/api/ImageUpload/UploadImage'); // Replace with your C# service endpoint
+    var request = http.MultipartRequest('POST', uri);
+    request.files.add(await http.MultipartFile.fromPath('image', imageFile.path));
+
+    try {
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        // Image uploaded successfully
+        print('Image uploaded');
+      } else {
+        // Handle other status codes
+        print('Image upload failed with status ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Error uploading image: $e');
+    }
   }
 
   @override
@@ -62,9 +85,14 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
             ),
             ElevatedButton(
               onPressed: () {
-                _getImage(ImageSource.camera);
+                if (_imageFile != null) {
+                  _uploadImage(File(_imageFile!.path));
+                } else {
+                  // Handle case where no image is selected
+                  print('Please select an image');
+                }
               },
-              child: const Text('Take a picture'),
+              child: const Text('Upload image'),
               style: ElevatedButton.styleFrom(
                 primary: Colors.blue,
                 textStyle: TextStyle(color: Colors.white),
