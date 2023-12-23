@@ -1,3 +1,3 @@
 class AppConfig {
-  static const String baseUrl = 'https://portalapps.azurewebsites.net';
+  static const String baseUrl = 'http://10.0.2.2:5001';
 }

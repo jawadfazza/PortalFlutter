@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:http/http.dart' as http;
+import 'package:shopping/GlobalTools/AppConfig.dart';
 import 'package:shopping/Shop/Models/Product.dart';
 
 import '../../GlobalTools/LocalizationManager.dart';
@@ -47,7 +48,7 @@ class _ProductInfoState extends State<ProductInfo> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       // Perform your custom product update logic here
-      var url = 'https://your-api-endpoint.com/updateProduct';
+      var url = '${AppConfig.baseUrl}/updateProduct';
 
       final body = jsonEncode({
         'Name': _nameController.text,
@@ -89,12 +90,7 @@ class _ProductInfoState extends State<ProductInfo> {
 
   Future<void> fetchDataProduct() async {
     //languageCode = _currentLocale.languageCode.toUpperCase();
-
-
-
     try {
-
-
         setState(() {
 
           // Update the below lines based on your API response and _ProductProfileState fields

@@ -5,6 +5,7 @@ import 'package:flutter_i18n/flutter_i18n_delegate.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:shopping/Account/LoginPage.dart';
+import 'package:shopping/GlobalTools/AppConfig.dart';
 import '../../GlobalTools/FormButton.dart';
 import '../../GlobalTools/LanguageButtons.dart';
 
@@ -115,7 +116,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       String Email = _emailController.text;
       String Password = _passwordController.text;
 
-        var url = 'https://portalapps.azurewebsites.net/api/Accounts/Create';
+        var url = '${AppConfig.baseUrl}/api/Accounts/Create';
 
         // Define the request headers
         final headers = <String, String>{

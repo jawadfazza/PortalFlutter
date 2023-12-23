@@ -8,6 +8,7 @@ import 'package:shopping/Account/RegistrationPage.dart';
 import 'package:shopping/main.dart';
 import '../../GlobalTools/FormButton.dart';
 import '../../GlobalTools/LanguageButtons.dart';
+import '../GlobalTools/AppConfig.dart';
 import '../Shop/Products/ProductList.dart';
 import 'Models/Account.dart';
 
@@ -94,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
 
       String Email = _emailController.text;
 
-      var url = 'https://portalapps.azurewebsites.net/api/Accounts/Login';
+      var url = '${AppConfig.baseUrl}/api/Accounts/Login';
 
       // Define the request headers
       final headers = <String, String>{

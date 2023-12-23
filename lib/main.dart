@@ -7,6 +7,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shopping/GlobalTools/AppConfig.dart';
 import 'package:shopping/GlobalTools/ProgressCustome.dart';
 import 'Account/Models/Account.dart';
 import 'GlobalTools/LocalizationManager.dart';
@@ -36,8 +37,9 @@ class MyApp extends StatefulWidget {
     String? RowKey = prefs.getString('RowKey');
     final LocalizationManager localizationManager = LocalizationManager();
     try {
-      var url = 'https://portalapps.azurewebsites.net/api/Accounts/GetByRowKey?RowKey=$RowKey';
+      var url = '${AppConfig.baseUrl}/api/Accounts/GetByRowKey?RowKey=$RowKey';
       final response = await http.get(Uri.parse(url));
+
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
         print(jsonResponse);

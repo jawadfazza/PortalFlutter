@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopping/Account/LoginPage.dart';
 import 'package:shopping/Account/Models/Account.dart';
+import 'package:shopping/GlobalTools/AppConfig.dart';
 import 'package:shopping/GlobalTools/bottomNavigationBar.dart';
 import 'package:shopping/Shop/Products/ProductList.dart';
 import 'package:shopping/Shop/Stores/StoreList.dart';
@@ -156,7 +157,7 @@ class _ProfileState extends State<Profile> {
 
     RowKey = prefs.getString('RowKey');
     try {
-      var url = 'https://portalapps.azurewebsites.net/api/Accounts/GetByRowKey?RowKey=$RowKey';
+      var url = '${AppConfig.baseUrl}/api/Accounts/GetByRowKey?RowKey=$RowKey';
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
