@@ -97,7 +97,7 @@ class _ProfileState extends State<Profile> {
         _isSubmitting = true;
       });
 
-      var url = 'https://portalapps.azurewebsites.net/api/Accounts/Update';
+      var url = '${AppConfig.baseUrl}/api/Accounts/Update';
 
       // Define the request headers
       final headers = <String, String>{

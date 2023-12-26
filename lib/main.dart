@@ -71,25 +71,23 @@ class MyApp extends StatefulWidget {
       return Center(
         child: Directionality(
           textDirection: TextDirection.ltr,
-          child: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
-                  SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
-                      strokeWidth: 4,
-                      semanticsLabel: 'Loading',
-                    ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                    strokeWidth: 4,
+                    semanticsLabel: 'Loading',
                   ),
-                  //SizedBox(height: 20),
-                  //
-                ],
-              ),
+                ),
+                //SizedBox(height: 20),
+                //
+              ],
             ),
           ),
         ),

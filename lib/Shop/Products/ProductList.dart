@@ -148,7 +148,9 @@ class _ProductListState extends State<ProductList> {
         hasError = false;
         errorMessage = '';
       });
+      DateTime startTime = DateTime.now(); // Record the start time
       try {
+
         products.clear();
         var groupRowKey = groupOptions
             .firstWhere((element) => element.name == selectedGroup)
@@ -171,6 +173,7 @@ class _ProductListState extends State<ProductList> {
           final List<dynamic> jsonList = jsonResponse as List<dynamic>;
           final List<Product> newProducts =
           jsonList.map((json) => Product.fromJson(json)).toList();
+
           setState(() {
             products.addAll(newProducts);
             isLoading = false;
@@ -182,6 +185,10 @@ class _ProductListState extends State<ProductList> {
             isLoading = false;
           });
         }
+        // Calculate the duration (response time) in milliseconds
+        DateTime endTime = DateTime.now(); // Record the end time
+        int responseTimeInMillis = endTime.difference(startTime).inMilliseconds;
+        print('Response time: $responseTimeInMillis ms');
       } catch (error) {
         setState(() {
           hasError = true;
@@ -202,7 +209,8 @@ class _ProductListState extends State<ProductList> {
         pageNumber += 1;
       });
 
-      await Future.delayed(const Duration(seconds: 2));
+      //await Future.delayed(const Duration(seconds: 2));
+      DateTime startTime = DateTime.now(); // Record the start time
 
       try {
         var groupRowKey = groupOptions
@@ -237,6 +245,10 @@ class _ProductListState extends State<ProductList> {
             isLoading = false;
           });
         }
+        // Calculate the duration (response time) in milliseconds
+        DateTime endTime = DateTime.now(); // Record the end time
+        int responseTimeInMillis = endTime.difference(startTime).inMilliseconds;
+        print('Response time: $responseTimeInMillis ms');
       } catch (error) {
         setState(() {
           hasError = true;

@@ -48,7 +48,7 @@ class _ProductInfoState extends State<ProductInfo> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       // Perform your custom product update logic here
-      var url = '${AppConfig.baseUrl}/updateProduct';
+      var url = '${AppConfig.baseUrl}/api/products/Update';
 
       final body = jsonEncode({
         'Name': _nameController.text,
@@ -64,7 +64,7 @@ class _ProductInfoState extends State<ProductInfo> {
         'ProductBrand': _brandController.text,
         'ProductWeight': double.parse(_weightController.text),
         'ProductDimensions': _dimensionsController.text,
-        // Add more fields as needed
+        'Lan': currentLocale.languageCode
       });
 
       try {
