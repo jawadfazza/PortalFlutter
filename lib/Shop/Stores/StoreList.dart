@@ -4,6 +4,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopping/Account/LoginPage.dart';
 import 'package:http/http.dart' as http;
+import 'package:shopping/Account/SettingsPage.dart';
 import 'package:shopping/Shop/Models/Group.dart';
 import 'package:shopping/Shop/Models/Store.dart';
 import 'package:shopping/Shop/Models/SubGroup.dart';
@@ -454,7 +455,7 @@ class _StoreListState extends State<StoreList> {
         break;
       case 2:
       // Navigate to the settings page or perform settings-related actions
-        Navigator.push(context,MaterialPageRoute(builder:(context) => Profile()));
+        Navigator.push(context,MaterialPageRoute(builder:(context) => SettingsPage()));
         break;
     // Add more cases for other items if needed
       default:

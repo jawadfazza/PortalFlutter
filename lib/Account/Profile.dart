@@ -193,44 +193,6 @@ class _ProfileState extends State<Profile> {
     });
   }
 
-  int _selectedIndex = 2;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-    //ProductLIst
-      case 0:
-        Navigator.push(context,MaterialPageRoute(builder:(context) => ProductList()));
-        break;
-      case 1:
-      // Navigate to the settings page or perform settings-related actions
-      //Navigator.push(context,MaterialPageRoute(builder:(context) => Profile()));
-        break;
-      case 2:
-      // Navigate to the settings page or perform settings-related actions
-        Navigator.push(context,MaterialPageRoute(builder:(context) => StoreList()));
-        break;
-    // Add more cases for other items if needed
-      default:
-        break;
-    }
-  }
-
-  // Sign-out method
-  void _signOut() async {
-    // Clear user session data (e.g., remove stored preferences or reset authentication state)
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.clear(); // Clear stored preferences or remove specific keys as needed
-
-    // Navigate to the login page after signing out
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => LoginPage()),
-    );
-  }
 
   String _selectedGender = '';
   String _preferredLanguage='';
@@ -247,12 +209,6 @@ class _ProfileState extends State<Profile> {
         key: _scaffoldKey,
         appBar: AppBar(
           title: Text(FlutterI18n.translate(context, "registrationForm")),
-          leading: IconButton(
-            icon: const Icon(Icons.logout), // Sign-out icon
-            onPressed: () {
-              _signOut(); // Call sign-out method
-            },
-          ),
         ),
         backgroundColor: Colors.white,
         body: isPageLoading?
@@ -413,10 +369,7 @@ class _ProfileState extends State<Profile> {
             ),
           ),
         ),
-        bottomNavigationBar: ProfileBottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onItemTapped: _onItemTapped,
-        ),
+
       ),
     );
   }

@@ -21,7 +21,6 @@ class ProductInfo extends StatefulWidget {
 class _ProductInfoState extends State<ProductInfo> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  bool _isSubmitting = false; // Flag to track form submission status
   Locale currentLocale = LocalizationManager().getCurrentLocale();
 
 
