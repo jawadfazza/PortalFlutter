@@ -1,43 +1,65 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_i18n/flutter_i18n_delegate.dart';
-import 'package:flutter_i18n/loaders/decoders/json_decode_strategy.dart';
-import 'package:flutter_i18n/loaders/file_translation_loader.dart';
-import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:flutter_i18n/loaders/file_translation_loader.dart';
+import 'package:flutter_i18n/loaders/decoders/json_decode_strategy.dart';
 import 'package:shopping/GlobalTools/AppConfig.dart';
-import 'package:shopping/GlobalTools/ProgressCustome.dart';
 import 'Account/Models/Account.dart';
 import 'GlobalTools/LocalizationManager.dart';
 import 'Shop/Products/ProductList.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  _MyAppState createState() => _MyAppState();
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Your App Title',
+      home: AppBody(),
+    );
+  }
 }
 
- class _MyAppState extends State<MyApp> {
-   static String preferdLanguage = "EN";
-   bool fetchedData = false;
+class AppBody extends StatefulWidget {
+  @override
+  _AppBodyState createState() => _AppBodyState();
+}
+
+class _AppBodyState extends State<AppBody> {
+  static String preferredLanguage = "EN";
+  bool fetchedData = false;
+  double _imageWidth = 100;
+  double _imageHeight = 100;
+  bool _animated = false;
 
   @override
   void initState() {
     super.initState();
+    startAnimation();
     fetchDataProfile();
+  }
+  void startAnimation() {
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        _animated = true;
+        _imageWidth = 300; // New width after animation ends
+        _imageHeight = 300; // New height after animation ends
+      });
+    });
   }
 
   Future<void> fetchDataProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    String? RowKey = prefs.getString('RowKey');
+    String? rowKey = prefs.getString('RowKey');
     final LocalizationManager localizationManager = LocalizationManager();
     try {
-      var url = '${AppConfig.baseUrl}/api/Accounts/GetByRowKey?RowKey=$RowKey';
+      var url = '${AppConfig.baseUrl}/api/Accounts/GetByRowKey?RowKey=$rowKey';
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
@@ -45,20 +67,20 @@ class MyApp extends StatefulWidget {
         print(jsonResponse);
         Account _account = Account.fromJson(jsonResponse);
 
-
         setState(() {
-          preferdLanguage = _account.preferdLanguage!=""?_account.preferdLanguage:"EN";
-          localizationManager.setCurrentLocale(Locale(preferdLanguage));
+          preferredLanguage = _account.preferdLanguage.isNotEmpty
+              ? _account.preferdLanguage
+              : "EN";
+          localizationManager.setCurrentLocale(Locale(preferredLanguage));
           fetchedData = true;
         });
-      }else{
+      } else {
         setState(() {
-          preferdLanguage = "EN";
-          localizationManager.setCurrentLocale(Locale(preferdLanguage));
+          preferredLanguage = "EN";
+          localizationManager.setCurrentLocale(Locale(preferredLanguage));
           fetchedData = true;
         });
       }
-
     } catch (error) {
       print(error);
     }
@@ -66,7 +88,6 @@ class MyApp extends StatefulWidget {
 
   @override
   Widget build(BuildContext context) {
-
     if (!fetchedData) {
       return Center(
         child: Directionality(
@@ -75,18 +96,18 @@ class MyApp extends StatefulWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
-                SizedBox(
-                  width: 100,
-                  height: 100,
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
-                    strokeWidth: 4,
-                    semanticsLabel: 'Loading',
+              children: [
+                AnimatedContainer(
+                  duration: Duration(seconds: 1),
+                  width: _animated ? _imageWidth : 100,
+                  height: _animated ? _imageHeight : 100,
+
+                  curve: Curves.easeInOut,
+                  child: Image.asset(
+                    'assets/Logo/logo.png', // Replace with your image path
+                    fit: BoxFit.cover,
                   ),
-                ),
-                //SizedBox(height: 20),
-                //
+                )
               ],
             ),
           ),
@@ -95,35 +116,13 @@ class MyApp extends StatefulWidget {
     } else {
       return MaterialApp(
         theme: ThemeData(
-          appBarTheme: const AppBarTheme(backgroundColor: Colors.blueGrey),
-          primaryColor: Colors.blueAccent,
-          inputDecorationTheme: InputDecorationTheme(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 14.0,
-              horizontal: 16.0,
-            ),
-          ),
-          checkboxTheme: CheckboxThemeData(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4.0),
-            ),
-          ),
-          radioTheme: RadioThemeData(
-            fillColor: MaterialStateColor.resolveWith((states) =>
-            Colors.deepPurpleAccent),
-          ),
-          colorScheme: ColorScheme.fromSwatch().copyWith(
-            secondary: Colors.deepPurpleAccent,
-          ),
+          // Your theme configurations
         ),
         localizationsDelegates: [
           FlutterI18nDelegate(
             translationLoader: FileTranslationLoader(
               useCountryCode: false,
-              fallbackFile: preferdLanguage, // Default language file
+              fallbackFile: preferredLanguage,
               basePath: 'assets/translations',
               decodeStrategies: [JsonDecodeStrategy()],
             ),
@@ -135,14 +134,8 @@ class MyApp extends StatefulWidget {
           Locale('en'),
           Locale('ar'),
         ],
-        home: ProductList()
+        home: ProductList(),
       );
     }
   }
 }
-
-
-
-
-
-

@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shopping/Shop/Products/ProductList.dart';
 import 'package:shopping/main.dart';
 import '../GlobalTools/AppConfig.dart';
+import '../GlobalTools/CustomPageRoute.dart';
 import 'Models/Account.dart';
 
 
@@ -38,25 +40,27 @@ class _LoginPageState extends State<LoginPage> {
         key: _scaffoldKey,
           body: Center(
               child: isSmallScreen
-                  ? Column(
+                  ? SingleChildScrollView(child:  Column(
                 mainAxisSize: MainAxisSize.min,
                 children: const [
                   _Logo(),
                   _FormContent(),
                 ],
-              )
-                  : Container(
+              ))
+                  : SingleChildScrollView(
+                    child: Container(
                 padding: const EdgeInsets.all(32.0),
                 constraints: const BoxConstraints(maxWidth: 800),
                 child: Row(
-                  children: const [
-                    Expanded(child: _Logo()),
-                    Expanded(
-                      child: Center(child: _FormContent()),
-                    ),
-                  ],
+                    children: const [
+                      Expanded(child: _Logo()),
+                      Expanded(
+                        child: Center(child: _FormContent()),
+                      ),
+                    ],
                 ),
-              ))),
+              ),
+                  ))),
     );
 
   }
@@ -74,11 +78,15 @@ class _Logo extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        FlutterLogo(size: isSmallScreen ? 100 : 200),
+        Image.asset(
+          'assets/Logo/logo.png', // Replace with your custom image asset path
+          width: isSmallScreen ? 150 : 200,
+          height: isSmallScreen ? 150 : 200,
+        ),
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            "Welcome to Flutter!",
+            "Soq Rawafed",
             textAlign: TextAlign.center,
             style: isSmallScreen
                 ? Theme.of(context).textTheme.headline5
@@ -103,9 +111,10 @@ class _FormContent extends StatefulWidget {
 class __FormContentState extends State<_FormContent> {
   bool _isPasswordVisible = false;
   bool _rememberMe = false;
+  bool _isSubmitting = false; // Flag to track form submission status
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _isSubmitting = false; // Flag to track form submission status
+
 
 
   final TextEditingController _passwordController = TextEditingController();
@@ -188,7 +197,9 @@ class __FormContentState extends State<_FormContent> {
 
           // Request successful, handle the response
           print(response.body);
-          Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
+          //Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
+          Navigator.push(context, CustomPageRoute(widget: MyApp()),);
+
         } else {
           // Request failed, handle the error
           print('POST request failed with status code ${response.statusCode}');
@@ -210,106 +221,111 @@ class __FormContentState extends State<_FormContent> {
   Widget build(BuildContext context) {
     return Container(
       constraints: const BoxConstraints(maxWidth: 300),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextFormField(
-              controller: _emailController,
-              validator: (value) => _validateEmail(value),
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                hintText: 'Enter your email',
-                prefixIcon: Icon(Icons.email_outlined),
-                border: OutlineInputBorder(),
-              ),
-            ),
-            _gap(),
-            TextFormField(
-              controller: _passwordController,
-              validator: (value) => _validatePassword(value),
-              obscureText: !_isPasswordVisible,
-              decoration: InputDecoration(
-                  labelText: 'Password',
-                  hintText: 'Enter your password',
-                  prefixIcon: const Icon(Icons.lock_outline_rounded),
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: Icon(_isPasswordVisible
-                        ? Icons.visibility_off
-                        : Icons.visibility),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  )),
-            ),
-            _gap(),
-            CheckboxListTile(
-              value: _rememberMe,
-              onChanged: (value) {
-                if (value == null) return;
-                setState(() {
-                  _rememberMe = value;
-                });
-              },
-              title: const Text('Remember me'),
-              controlAffinity: ListTileControlAffinity.leading,
-              dense: true,
-              contentPadding: const EdgeInsets.all(0),
-            ),
-            _gap(),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4)),
+      child:  SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextFormField(
+                controller: _emailController,
+                validator: (value) => _validateEmail(value),
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  hintText: 'Enter your email',
+                  prefixIcon: Icon(Icons.email_outlined),
+                  border: OutlineInputBorder(),
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text(
-                    'Sign in',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              _gap(),
+              TextFormField(
+                controller: _passwordController,
+                validator: (value) => _validatePassword(value),
+                obscureText: !_isPasswordVisible,
+                decoration: InputDecoration(
+                    labelText: 'Password',
+                    hintText: 'Enter your password',
+                    prefixIcon: const Icon(Icons.lock_outline_rounded),
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(_isPasswordVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    )),
+              ),
+              _gap(),
+              CheckboxListTile(
+                value: _rememberMe,
+                onChanged: (value) {
+                  if (value == null) return;
+                  setState(() {
+                    _rememberMe = value;
+                  });
+                },
+                title: const Text('Remember me'),
+                controlAffinity: ListTileControlAffinity.leading,
+                dense: true,
+                contentPadding: const EdgeInsets.all(0),
+              ),
+              _gap(),
+              SizedBox(
+
+                width: double.infinity,
+                child: ElevatedButton(
+
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      'Sign in',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  onPressed: () async {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      await _submitForm();
+                    }
+                  },
+                ),
+              ),
+              _gap(),
+              SizedBox(
+                width: double.maxFinite,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    // Adjust text button style here (e.g., padding, text color, etc.)
+                  ),
+                  onPressed: () {
+                    if (_formKey.currentState?.validate() ??  false) {
+                      // Perform actions when the button is pressed
+                      // _submitForm();
+                      /// do something
+                    }
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      "Register",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue), // Adjust text style as needed
+                    ),
                   ),
                 ),
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-
-                    _submitForm();
-                    /// do something
-                  }
-                },
               ),
-            ),
-            _gap(),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4)),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text(
-                    'Register',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
 
-                    //_submitForm();
-                    /// do something
-                  }
-                },
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

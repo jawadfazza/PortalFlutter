@@ -11,8 +11,8 @@
   "confirmPassword": "Confirm Password",
   "phone": "Phone Number",
   "submit": "Submit",
-  "RegisterAccount": "Register Account",
-  "LoginAccount": "Login Account",
+  "RegisterAccount": "Register",
+  "LoginAccount": "Sign In",
   "LoginForm": "Login One Click Shopping",
 
   "__ValidationRESX": "Validation Resourse",
