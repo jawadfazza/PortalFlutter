@@ -19,9 +19,11 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
+
   Locale _currentLocale = const Locale('en', 'US');
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   void _changeLanguage(Locale newLocale) {
     setState(() {
       _currentLocale = newLocale;
@@ -39,28 +41,30 @@ class _LoginPageState extends State<LoginPage> {
       child:  Scaffold(
         key: _scaffoldKey,
           body: Center(
-              child: isSmallScreen
-                  ? SingleChildScrollView(child:  Column(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  _Logo(),
-                  _FormContent(),
-                ],
-              ))
-                  : SingleChildScrollView(
-                    child: Container(
-                padding: const EdgeInsets.all(32.0),
-                constraints: const BoxConstraints(maxWidth: 800),
-                child: Row(
-                    children: const [
-                      Expanded(child: _Logo()),
-                      Expanded(
-                        child: Center(child: _FormContent()),
-                      ),
-                    ],
-                ),
+              child: SingleChildScrollView(
+                child: isSmallScreen
+                    ? SingleChildScrollView(child:  Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    _Logo(),
+                    _FormContent(),
+                  ],
+                ))
+                    : SingleChildScrollView(
+                      child: Container(
+                  padding: const EdgeInsets.all(32.0),
+                  constraints: const BoxConstraints(maxWidth: 800),
+                  child: Row(
+                      children: const [
+                        Expanded(child: _Logo()),
+                        Expanded(
+                          child: Center(child: _FormContent()),
+                        ),
+                      ],
+                    ),
+                  )),
               ),
-                  ))),
+          )),
     );
 
   }
@@ -80,22 +84,10 @@ class _Logo extends StatelessWidget {
       children: [
         Image.asset(
           'assets/Logo/logo.png', // Replace with your custom image asset path
-          width: isSmallScreen ? 150 : 200,
-          height: isSmallScreen ? 150 : 200,
+          width: isSmallScreen ? 250 : 350,
+          height: isSmallScreen ? 250 : 350,
         ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            "Soq Rawafed",
-            textAlign: TextAlign.center,
-            style: isSmallScreen
-                ? Theme.of(context).textTheme.headline5
-                : Theme.of(context)
-                .textTheme
-                .headline4
-                ?.copyWith(color: Colors.black),
-          ),
-        )
+        const SizedBox(height: 15)
       ],
     );
   }
@@ -110,17 +102,16 @@ class _FormContent extends StatefulWidget {
 
 class __FormContentState extends State<_FormContent> {
   bool _isPasswordVisible = false;
-  bool _rememberMe = false;
+  bool _rememberMe = true;
   bool _isSubmitting = false; // Flag to track form submission status
+  static String _RowKey="";
+  static String _preferdLanguage="";
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-
 
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-
 
 
   String? _validatePassword(String? value) {
@@ -167,6 +158,7 @@ class __FormContentState extends State<_FormContent> {
       // Perform your custom login logic here
       setState(() {
         _isSubmitting=true;
+
       });
       var url = '${AppConfig.baseUrl}/api/Accounts/Login';
       // Define the request headers
@@ -192,18 +184,21 @@ class __FormContentState extends State<_FormContent> {
 
           // Store user information after successful login
           SharedPreferences prefs = await SharedPreferences.getInstance();
+
           prefs.setString('RowKey', _account.rowKey);
           prefs.setString('preferdLanguage', _account.preferdLanguage);
+          prefs.setInt('RememberMe', _rememberMe?1000:1);
 
           // Request successful, handle the response
           print(response.body);
-          //Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
-          Navigator.push(context, CustomPageRoute(widget: MyApp()),);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
+          //Navigator.push(context, CustomPageRoute(widget: MyApp()),);
 
         } else {
           // Request failed, handle the error
           print('POST request failed with status code ${response.statusCode}');
           print(response.body);
+
           setState(() {
             _isSubmitting = false;
           });

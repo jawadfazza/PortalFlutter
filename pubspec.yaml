@@ -38,8 +38,10 @@ dependencies:
   mailer: any
   easy_debounce: ^2.0.3
   shared_preferences: any
-  flutter_spinkit: ^5.1.0
+  flutter_spinkit: any
   image_picker: any
+
+
 
 
   # The following adds the Cupertino Icons font to your application.
