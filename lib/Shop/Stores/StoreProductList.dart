@@ -23,6 +23,7 @@ import '../../GlobalTools/ListNoResultFound.dart';
 import '../../GlobalTools/ProgressCustome.dart';
 import '../Cart/_CartShopIcon.dart';
 import '../../GlobalTools/bottomNavigationBar.dart';
+import '../Models/Constraint.dart';
 
 class StoreProductList extends StatefulWidget {
   final Store store;
@@ -372,7 +373,7 @@ class _StoreProductListState extends State<StoreProductList> {
   Widget _buildSubGroups() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+      padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 2),
       child: Row(
         children: filteredSubGroupOptions.map((SubGroup value) {
           return GestureDetector(
@@ -383,12 +384,14 @@ class _StoreProductListState extends State<StoreProductList> {
               });
             },
             child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 5),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              width: 75,
+              height: 75,
+              margin: const EdgeInsets.symmetric(horizontal: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
               decoration: BoxDecoration(
                 color: selectedSubGroup == value.name
-                    ? Colors.blue
-                    : Colors.grey[300],
+                    ? Colors.indigo
+                    : Colors.grey[100],
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: selectedSubGroup == value.name
@@ -404,15 +407,29 @@ class _StoreProductListState extends State<StoreProductList> {
                   ),
                 ],
               ),
-              child: Text(
-                value.name,
-                style: TextStyle(
-                  color: selectedSubGroup == value.name
-                      ? Colors.white
-                      : Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
+              child: Column(
+                children: [
+                  Icon(
+                    Constraint.subIconMapping[value.rowKey] ?? Icons.error,
+                    size: 20,
+                    color: selectedSubGroup == value.name
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    value.name,//.length>=19? value.name.substring(0,19):value.name,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: selectedSubGroup == value.name
+                          ? Colors.white
+                          : Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 9,
+                      overflow: TextOverflow.visible,
+                    ),
+                  ),
+                ],
               ),
             ),
           );

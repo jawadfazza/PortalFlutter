@@ -21,6 +21,7 @@ import '../Groups/FilterOption.dart';
 import '../../GlobalTools/ListNoResultFound.dart';
 import '../../GlobalTools/ProgressCustome.dart';
 import '../Cart/_CartShopIcon.dart';
+import '../Models/Constraint.dart';
 
 
 
@@ -276,11 +277,10 @@ class _StoreListState extends State<StoreList> {
     }
 
   }
-
   Widget _buildGroups() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+      padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 2),
       child: Row(
         children: groupOptions.map((Group value) {
           return GestureDetector(
@@ -291,13 +291,16 @@ class _StoreListState extends State<StoreList> {
               });
             },
             child: Container(
+              width: 80,
+              height: 90,
+
               margin: const EdgeInsets.symmetric(horizontal: 5),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
               decoration: BoxDecoration(
                 color: selectedGroup == value.name
-                    ? Colors.blue
-                    : Colors.grey[300],
-                borderRadius: BorderRadius.circular(20),
+                    ? Colors.indigo
+                    : Colors.grey[100],
+                borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: selectedGroup == value.name
                       ? Colors.blue
@@ -312,15 +315,29 @@ class _StoreListState extends State<StoreList> {
                   ),
                 ],
               ),
-              child: Text(
-                value.name,
-                style: TextStyle(
-                  color: selectedGroup == value.name
-                      ? Colors.white
-                      : Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
+              child: Column(
+                children: [
+                  Icon(
+                    size: 40,
+                    Constraint.iconMapping[value.rowKey], // Replace this with the desired icon
+                    color: selectedGroup == value.name
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                  SizedBox(height: 5), // Adjust the spacing between icon and text
+                  Text(
+                    textAlign: TextAlign.center,
+                    value.name.split("&")[0],
+                    style: TextStyle(
+                        color: selectedGroup == value.name
+                            ? Colors.white
+                            : Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        overflow: TextOverflow.visible
+                    ),
+                  ),
+                ],
               ),
             ),
           );
@@ -328,6 +345,7 @@ class _StoreListState extends State<StoreList> {
       ),
     );
   }
+
 
 
   void applyGroupFilter(String group) {
