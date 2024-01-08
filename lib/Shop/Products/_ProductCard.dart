@@ -244,20 +244,7 @@ class ProductCard extends StatelessWidget {
         const SizedBox(width: 12),
         Column(
           children: [
-            IconButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Dialog(
-                      child: ProductInfo(product: product),
-                    );
-                  },
-                );
-              },
-              icon: const Icon(Icons.edit),
-              color: Colors.green,
-            ),
+
             IconButton(
               onPressed: addToCart,
               icon: showProgressIndicator && product.rowKey == rowKey
@@ -268,6 +255,7 @@ class ProductCard extends StatelessWidget {
             IconButton(
               onPressed: () {
                 showDialog(
+
                   context: context,
                   builder: (BuildContext context) {
                     return ImageGalleryPopup(

@@ -36,6 +36,7 @@ class _AppBodyState extends State<AppBody> {
   double _imageWidth = 100;
   double _imageHeight = 100;
   bool _animated = false;
+   bool? _isDark = false;
 
   @override
   void initState() {
@@ -117,6 +118,7 @@ class _AppBodyState extends State<AppBody> {
       return MaterialApp(
         theme: ThemeData(
         appBarTheme: const AppBarTheme(
+
           color: Colors.deepPurple, // App bar background color
           elevation: 0, // No shadow
           centerTitle: true, // Center align title
@@ -129,7 +131,6 @@ class _AppBodyState extends State<AppBody> {
             ),
           ),
         ),
-
         // Define the text theme
         textTheme: const TextTheme(
           bodySmall:  TextStyle(
@@ -145,7 +146,6 @@ class _AppBodyState extends State<AppBody> {
           // Add more text styles for different purposes as needed
 
         ),
-
         // Define the card theme
         cardTheme: CardTheme(
           elevation: 4, // Elevation of cards
@@ -154,7 +154,6 @@ class _AppBodyState extends State<AppBody> {
             borderRadius: BorderRadius.circular(12.0), // Rounded corners for cards
           ),
         ),
-
         // Define button theme
         buttonTheme: ButtonThemeData(
           buttonColor: Colors.deepPurple, // Button background color
@@ -163,7 +162,6 @@ class _AppBodyState extends State<AppBody> {
             borderRadius: BorderRadius.circular(8.0), // Rounded corners for buttons
           ),
         ),
-
         // Define other theme properties as necessary
         scaffoldBackgroundColor: Colors.grey[200], // Background color for scaffold
         dividerColor: Colors.grey[300], // Color for dividers
@@ -177,6 +175,7 @@ class _AppBodyState extends State<AppBody> {
           ),
         ), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple).copyWith(secondary: Colors.pinkAccent),
       ),
+
         localizationsDelegates: [
           FlutterI18nDelegate(
             translationLoader: FileTranslationLoader(

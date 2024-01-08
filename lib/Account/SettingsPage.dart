@@ -16,7 +16,16 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPage2State extends State<SettingsPage> {
-  bool _isDark = false;
+  bool? _isDark = false;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      _isDark = prefs.getBool("_isDark") ?? false;
+    });
+  }
   // Sign-out method
   void _signOut() async {
     // Clear user session data (e.g., remove stored preferences or reset authentication state)
@@ -29,10 +38,12 @@ class _SettingsPage2State extends State<SettingsPage> {
       MaterialPageRoute(builder: (context) => LoginPage()),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: _isDark ? ThemeData.dark() : ThemeData.light(),
+      data: _isDark! ? ThemeData.dark() : ThemeData.light(),
+
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Settings"),
@@ -49,10 +60,11 @@ class _SettingsPage2State extends State<SettingsPage> {
                         title: "Dark Mode",
                         icon: Icons.dark_mode_outlined,
                         trailing: Switch(
-                            value: _isDark,
-                            onChanged: (value) {
-                              setState(() {
-                                _isDark = value;
+                            value: _isDark!,
+                            onChanged:  (value) {
+                              setState(()  async {
+                                SharedPreferences prefs = await SharedPreferences.getInstance();
+                                prefs.setBool('_isDark', value);
                               });
                             })),
                     const _CustomListTile(
@@ -69,15 +81,13 @@ class _SettingsPage2State extends State<SettingsPage> {
                   children: [
                     _CustomListTile(
                         title: "Profile", icon: Icons.person_outline_rounded, onTap:() {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Dialog(
-                            // Adjust the dialog size and other properties as needed
-                            child: Profile(),
-                          );
-                        },
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => Profile(),
+                        ),
                       );
+
                     }),
                     const _CustomListTile(
                         title: "Messaging", icon: Icons.message_outlined),

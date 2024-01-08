@@ -186,6 +186,7 @@ class __FormContentState extends State<_FormContent> {
           SharedPreferences prefs = await SharedPreferences.getInstance();
 
           prefs.setString('RowKey', _account.rowKey);
+          prefs.setBool('_isDark', false);
           prefs.setString('preferdLanguage', _account.preferdLanguage);
           prefs.setInt('RememberMe', _rememberMe?1000:1);
 

@@ -25,16 +25,16 @@ class _ProfileState extends State<Profile> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _isSubmitting = false; // Flag to track form submission status
   String? RowKey ="";
+  String _selectedGender = '';
+  String _preferredLanguage='';
 
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _fullnameController = TextEditingController();
-  TextEditingController _phoneController = TextEditingController();
-  TextEditingController _genderController = TextEditingController();
-  TextEditingController _preferredLanguageController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _fullnameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _preferredLanguageController = TextEditingController();
 
   Locale currentLocale = LocalizationManager().getCurrentLocale();
-
-
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
@@ -45,12 +45,14 @@ class _ProfileState extends State<Profile> {
     if (!emailRegex.hasMatch(value)) {
       return FlutterI18n.translate(context, "InvalidEmailFormate");
     }
+    return null;
   }
 
   String? _validateFullNname(String? value) {
     if (value == null || value.isEmpty) {
       return FlutterI18n.translate(context, "invalidFullName");
     }
+    return null;
   }
 
   String? _validatePhoneNumber(String? value) {
@@ -194,10 +196,6 @@ class _ProfileState extends State<Profile> {
   }
 
 
-  String _selectedGender = '';
-  String _preferredLanguage='';
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -212,7 +210,7 @@ class _ProfileState extends State<Profile> {
         ),
         backgroundColor: Colors.white,
         body: isPageLoading?
-        Center(
+        const Center(
           child: CircularProgressIndicator(), // Display a loading indicator
         ):
         SingleChildScrollView(
