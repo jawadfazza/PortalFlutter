@@ -75,15 +75,15 @@ class _ProductListState extends State<ProductList> {
 
 
   @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    if (currentLocale.languageCode.toLowerCase() == 'ar') {
-      _changeLanguage(const Locale('ar'));
-    } else {
-      _changeLanguage(const Locale('en'));
-    }
-  }
+ void didChangeDependencies() {
+   // TODO: implement didChangeDependencies
+   super.didChangeDependencies();
+   if (currentLocale.languageCode.toLowerCase() == 'ar') {
+     _changeLanguage(const Locale('ar'));
+   } else {
+     _changeLanguage(const Locale('en'));
+   }
+ }
 
   @override
   void initState() {
@@ -282,9 +282,6 @@ class _ProductListState extends State<ProductList> {
     setState(() {
       FlutterI18n.refresh(context, newLocale);
       LocalizationManager().setCurrentLocale(newLocale);
-      fetchDataGroups();
-      fetchDataSubGroups();
-      fetchData();
     });
   }
 
@@ -426,12 +423,11 @@ class _ProductListState extends State<ProductList> {
               active: true,
               groupRowKey: ''));
           filteredSubGroupOptions.addAll(newSubGroups);
-          newSubGroups.forEach((element) {
-            if(element.groupRowKey=='8c4b1276-0799-403b-8cbf-5a8d02d0fda3') {
-              print(element.rowKey + "," + element.name + "\n");
-            }
-          });
-
+         //newSubGroups.forEach((element) {
+         //  if(element.groupRowKey=='8c4b1276-0799-403b-8cbf-5a8d02d0fda3') {
+         //    print(element.rowKey + "," + element.name + "\n");
+         //  }
+         //});
         });
       }
     } catch (error) {
@@ -490,7 +486,7 @@ class _ProductListState extends State<ProductList> {
                         ? Colors.white
                         : Colors.black,
                   ),
-                  SizedBox(height: 5), // Adjust the spacing between icon and text
+                  const SizedBox(height: 5), // Adjust the spacing between icon and text
                   Text(
                     textAlign: TextAlign.center,
                     value.name.split("&")[0],
@@ -558,9 +554,9 @@ class _ProductListState extends State<ProductList> {
                         ? Colors.white
                         : Colors.black,
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   Text(
-                    value.name,//.length>=19? value.name.substring(0,19):value.name,
+                    value.name.length>=15? value.name.substring(0,15):value.name,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: selectedSubGroup == value.name
@@ -580,9 +576,9 @@ class _ProductListState extends State<ProductList> {
     );
   }
 
-  Widget _buildSearchBox(){
+  Widget _buildSearchBox() {
     return Padding(
-      padding: const EdgeInsets.all(4.0),
+      padding: const EdgeInsets.all(10.0),
       child: TextField(
         controller: _searchController,
         onSubmitted: (value) {
@@ -594,22 +590,36 @@ class _ProductListState extends State<ProductList> {
             fetchData();
           });
         },
+        onChanged: (value) {
+          setState(() {
+            // Update the search query as the text changes
+            searchQuery = value.trim();
+          });
+        },
         decoration: InputDecoration(
           hintText: FlutterI18n.translate(context, "Search"),
-          prefixIcon: const Icon(Icons.search),
-          suffixIcon: _searchController.text.isNotEmpty ? IconButton(icon: const Icon(Icons.clear), onPressed: _clearSearch,) : null,
+          prefixIcon: const Icon(Icons.search, color: Colors.grey), // Change the prefix icon color if needed
+          suffixIcon: _searchController.text.isNotEmpty
+              ? IconButton(
+            icon: const Icon(Icons.clear),
+            onPressed: _clearSearch,
+            color: Colors.grey, // Change the clear icon color if needed
+          )
+              : null,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5.0),
+            borderRadius: BorderRadius.circular(10.0),
             borderSide: const BorderSide(color: Colors.white),
           ),
-          filled: false,
-          fillColor: Colors.grey[100],
-          //contentPadding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+          filled: true, // Change to true to have a filled background
+          fillColor: Colors.grey[200], // Change the background color if needed
+          contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0), // Adjust content padding
         ),
-        style: const TextStyle(fontSize: 16.0),
+        style: const TextStyle(fontSize: 16.0, color: Colors.black), // Change text color and size if needed
       ),
     );
   }
+
+
 
   void applyGroupFilter(String group, String rowKey) {
     setState(() {
@@ -750,7 +760,7 @@ class _ProductListState extends State<ProductList> {
       case 2:
       // Navigate to the settings page or perform settings-related actions
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SettingsPage()));
+            context, MaterialPageRoute(builder: (context) => const SettingsPage()));
         break;
     // Add more cases for other items if needed
       default:
@@ -803,7 +813,7 @@ class _ProductListState extends State<ProductList> {
             // Conditionally display widgets based on scrolling state
             if (!_isListViewScrolling) _buildSearchBox(),
             if (!_isListViewScrolling) _buildGroups(),
-            if (!_isListViewScrolling) SizedBox(height: 10),
+            if (!_isListViewScrolling) const SizedBox(height: 10),
             if (!_isListViewScrolling) _buildSubGroups(),
             Expanded(
               child: hasError ? ErrorScreen(errorMessage: errorMessage,

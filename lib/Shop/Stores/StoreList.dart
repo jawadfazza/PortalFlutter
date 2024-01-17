@@ -50,11 +50,10 @@ class _StoreListState extends State<StoreList> {
   bool isResultFound = false;
   bool hasError = false;
   bool _showScrollButton = false; // Add this variable
-  bool _isAddingToCart = false;
+  bool _isListViewScrolling = false; // Flag to track ListView scrolling state
 
   String searchQuery = '';
   String errorMessage = '';
-  late String _storeRowKey = '';
   String? RowKey ='';
   String selectedGroup='-'; // No default selected group // Default selected group filter
 
@@ -227,6 +226,8 @@ class _StoreListState extends State<StoreList> {
     // Update the visibility of the scroll button
     setState(() {
       _showScrollButton = _scrollController.position.pixels >= 200;
+      _isListViewScrolling = _scrollController.position.pixels <= 150;
+      _isListViewScrolling = _scrollController.position.pixels > 150;
     });
   }
 
@@ -234,9 +235,6 @@ class _StoreListState extends State<StoreList> {
     setState(() {
       FlutterI18n.refresh(context, newLocale);
       LocalizationManager().setCurrentLocale(newLocale);
-      fetchDataGroups();
-      fetchData();
-
     });
   }
   // This function will be called when the store is added to the cart
@@ -249,7 +247,6 @@ class _StoreListState extends State<StoreList> {
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
-
 
 
   Future<void> fetchDataGroups() async {
@@ -276,6 +273,48 @@ class _StoreListState extends State<StoreList> {
       print(error);
     }
 
+  }
+  Widget _buildSearchBox() {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: TextField(
+        controller: _searchController,
+        onSubmitted: (value) {
+          setState(() {
+            searchQuery = value.trim();
+            pageSize = 20;
+            pageNumber += 1;
+            stores.clear();
+            fetchData();
+          });
+        },
+        onChanged: (value) {
+          setState(() {
+            // Update the search query as the text changes
+            searchQuery = value.trim();
+          });
+        },
+        decoration: InputDecoration(
+          hintText: FlutterI18n.translate(context, "Search"),
+          prefixIcon: const Icon(Icons.search, color: Colors.grey), // Change the prefix icon color if needed
+          suffixIcon: _searchController.text.isNotEmpty
+              ? IconButton(
+            icon: const Icon(Icons.clear),
+            onPressed: _clearSearch,
+            color: Colors.grey, // Change the clear icon color if needed
+          )
+              : null,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: const BorderSide(color: Colors.white),
+          ),
+          filled: true, // Change to true to have a filled background
+          fillColor: Colors.grey[200], // Change the background color if needed
+          contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0), // Adjust content padding
+        ),
+        style: const TextStyle(fontSize: 16.0, color: Colors.black), // Change text color and size if needed
+      ),
+    );
   }
   Widget _buildGroups() {
     return SingleChildScrollView(
@@ -324,7 +363,7 @@ class _StoreListState extends State<StoreList> {
                         ? Colors.white
                         : Colors.black,
                   ),
-                  SizedBox(height: 5), // Adjust the spacing between icon and text
+                  const SizedBox(height: 5), // Adjust the spacing between icon and text
                   Text(
                     textAlign: TextAlign.center,
                     value.name.split("&")[0],
@@ -345,16 +384,12 @@ class _StoreListState extends State<StoreList> {
       ),
     );
   }
-
-
-
   void applyGroupFilter(String group) {
     setState(() {
       selectedGroup=group;
       fetchData();
     });
   }
-
 
   // Add this method to your _StoreListState class
   Widget _buildListItem(BuildContext context, int index) {
@@ -473,7 +508,7 @@ class _StoreListState extends State<StoreList> {
         break;
       case 2:
       // Navigate to the settings page or perform settings-related actions
-        Navigator.push(context,MaterialPageRoute(builder:(context) => SettingsPage()));
+        Navigator.push(context,MaterialPageRoute(builder:(context) => const SettingsPage()));
         break;
     // Add more cases for other items if needed
       default:
@@ -513,44 +548,11 @@ class _StoreListState extends State<StoreList> {
           ],
         ),
         body:  isPageLoading
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: _searchController,
-                onSubmitted: (value) {
-                  setState(() {
-                    searchQuery = value.trim();
-                    pageSize = 20;
-                    pageNumber += 1;
-                    stores.clear();
-                    fetchData();
-                  });
-                },
-                decoration: InputDecoration(
-                  hintText: FlutterI18n.translate(context, "Search") ,
-                  prefixIcon: const Icon(Icons.search),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: _clearSearch,
-                  )
-                      : null,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(color: Colors.grey),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 12.0, horizontal: 16.0),
-                ),
-                style: const TextStyle(fontSize: 16.0),
-              ),
-            ),
-            _buildGroups(),
+            if (!_isListViewScrolling) _buildSearchBox(),
+            if (!_isListViewScrolling) _buildGroups(),
             Expanded(
               child: hasError ? ErrorScreen(errorMessage: errorMessage,
                 onRetry: () {

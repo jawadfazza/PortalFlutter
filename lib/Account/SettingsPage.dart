@@ -18,14 +18,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPage2State extends State<SettingsPage> {
   bool? _isDark = false;
 
-  @override
-  void initState() {
-    super.initState();
-    setState(() async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      _isDark = prefs.getBool("_isDark") ?? false;
-    });
-  }
+
   // Sign-out method
   void _signOut() async {
     // Clear user session data (e.g., remove stored preferences or reset authentication state)
