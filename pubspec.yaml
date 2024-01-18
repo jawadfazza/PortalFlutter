@@ -36,10 +36,11 @@ dependencies:
   uuid: any
   intl: any
   mailer: any
-  easy_debounce: ^2.0.3
+  easy_debounce: any
   shared_preferences: any
   flutter_spinkit: any
   image_picker: any
+
 
 
 

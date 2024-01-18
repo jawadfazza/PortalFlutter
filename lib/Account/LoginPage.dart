@@ -213,6 +213,28 @@ class __FormContentState extends State<_FormContent> {
     }
   }
 
+// Future<void> _handleGoogleSignIn() async {
+//   try {
+//     final GoogleSignInAccount? googleSignInAccount =
+//     await GoogleSignIn(clientId: "915786824433-mhgrdj6f8s33eav772e3dsft3t9vdoil.apps.googleusercontent.com",
+//       scopes: ['email']).signIn();
+
+//     if (googleSignInAccount != null) {
+//       // Successfully signed in with Google, now you can use the user's information
+//       // For example, you can access googleSignInAccount.email, googleSignInAccount.displayName, etc.
+//       print('Google Sign In Success: ${googleSignInAccount.email}');
+//     } else {
+//       // User canceled the Google sign-in
+//       print('Google Sign In Canceled');
+//     }
+//   } catch (error) {
+//     print('Error during Google Sign In: $error');
+//   }
+// }
+
+// Define a boolean flag to track whether the async operation is in progress
+  bool isSubmitting = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -274,25 +296,65 @@ class __FormContentState extends State<_FormContent> {
 
                 width: double.infinity,
                 child: ElevatedButton(
-
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4)),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                   ),
+                  onPressed: isSubmitting
+                      ? null // Button is disabled while the async operation is in progress
+                      : () async {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      // Set the flag to true before starting the async operation
+                      setState(() {
+                        isSubmitting = true;
+                      });
+
+                      await _submitForm();
+
+                      // Set the flag back to false after the async operation is complete
+                      setState(() {
+                        isSubmitting = false;
+                      });
+                    }
+                  },
                   child: const Padding(
-                    padding: EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(1.0),
                     child: Text(
                       'Sign in',
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  onPressed: () async {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      await _submitForm();
-                    }
-                  },
                 ),
               ),
+              _gap(),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  //onPressed: () => _handleGoogleSignIn(),
+                  onPressed: () {
+
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(1.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          'assets/Logo/google_logo.png', // Replace with the path to your Google logo asset
+                          height: 30,
+                        ),
+                        const SizedBox(width: 10),
+                        const Text(
+                          'Sign in with Google',
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
               _gap(),
               SizedBox(
                 width: double.maxFinite,

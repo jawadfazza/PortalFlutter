@@ -12,6 +12,12 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Initialize GoogleSignIn
+ // GoogleSignIn().onCurrentUserChanged.listen((GoogleSignInAccount? account) {
+    // Handle user changes
+  //  print('GoogleSignInAccount changed: $account');
+ // });
   runApp(MyApp());
 }
 
