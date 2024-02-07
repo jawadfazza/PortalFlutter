@@ -14,6 +14,7 @@ class CartCard extends StatelessWidget {
     required this.removeProduct,
     required this.increaseQuantity,
     required this.decreaseQuantity,
+
   });
 
   @override

@@ -159,7 +159,7 @@ class _ProfileState extends State<Profile> {
 
     RowKey = prefs.getString('RowKey');
     try {
-      var url = 'https://portalapps.azurewebsites.net/api/Accounts/GetByRowKey?RowKey=$RowKey';
+      var url = '${AppConfig.baseUrl}/api/Accounts/GetByRowKey?RowKey=$RowKey';
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);

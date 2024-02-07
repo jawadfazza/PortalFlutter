@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shopping/GlobalTools/AppConfig.dart';
 import 'package:shopping/Shop/Cart/_CartCard.dart';
 import 'package:shopping/Shop/Models/Product.dart';
 import '../../GlobalTools/AlertMessage.dart';
 import 'package:collection/collection.dart';
+import 'package:http/http.dart' as http;
+import '../Models/Store.dart';
+import '../Stores/StoreProductList.dart';
 
 
 class ShoppingCart extends StatefulWidget {
@@ -73,12 +79,33 @@ class ShoppingCart extends StatefulWidget {
 
 class _ShoppingCartState extends State<ShoppingCart> {
 
-
   @override
   void initState() {
     super.initState();
     ShoppingCart._groupCartItems();
   }
+  Future<void> fetchDataProfile(RowKey) async {
+    //languageCode = _currentLocale.languageCode.toUpperCase();
+
+    try {
+      var url = '${AppConfig.baseUrl}/api/Stores/GetByRowKey?RowKey=$RowKey';
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        print(jsonResponse);
+        Store _store  = Store.fromJson(jsonResponse);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StoreProductList(store: _store),
+          ),
+        );
+     }
+    } catch (error) {
+      print(error);
+    }
+  }
+
   double calculateTotalCost(List<Product> cartItems) {
     double totalCost = 0;
     for (var item in cartItems) {
@@ -136,41 +163,54 @@ class _ShoppingCartState extends State<ShoppingCart> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: ShoppingCart.groupedCartItems.length,
-        itemBuilder: (context, index) {
-          final storeDescription = ShoppingCart.groupedCartItems.keys.elementAt(index);
-          final productsInStore = ShoppingCart.groupedCartItems[storeDescription]!;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Text(
-                  storeDescription,
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.black),
-                ),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: productsInStore.length,
-                itemBuilder: (context, index) {
-                  final product = productsInStore[index];
-                  return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-                    child: CartCard(
-                      product: product,
-                      removeProduct: removeProduct,
-                      decreaseQuantity: decreaseQuantity,
-                      increaseQuantity: increaseQuantity,
+      body: Column(
+        children: [
+          Expanded( // Wrap the ListView.builder in an Expanded widget
+            child: ListView.builder(
+              itemCount: ShoppingCart.groupedCartItems.length,
+              itemBuilder: (context, index) {
+                final storeDescription = ShoppingCart.groupedCartItems.keys.elementAt(index);
+                final productsInStore = ShoppingCart.groupedCartItems[storeDescription]!;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Text(
+                        storeDescription,
+                        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.black),
+                      ),
                     ),
-                  );
-                },
-              ),
-            ],
-          );
-        },
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: productsInStore.length,
+                      itemBuilder: (context, index) {
+                        final product = productsInStore[index];
+                        return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              fetchDataProfile(product.storeRowKey);
+
+                            },
+                            child: CartCard(
+
+                              product: product,
+                              removeProduct: removeProduct,
+                              decreaseQuantity: decreaseQuantity,
+                              increaseQuantity: increaseQuantity,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
