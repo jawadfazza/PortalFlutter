@@ -4,6 +4,7 @@ class Product {
   String groupRowKey;
   String subGroupRowKey;
   String storeRowKey;
+  String storeDescription;
   int seq;
   String name; // Added property for product name
   String description; // Added property for product description
@@ -28,6 +29,7 @@ class Product {
     required this.groupRowKey,
     required this.subGroupRowKey,
     required this.storeRowKey,
+    required this.storeDescription,
     required this.seq,
     required this.imageURL,
     required this.price,
@@ -54,6 +56,7 @@ class Product {
       groupRowKey: json['groupRowKey'] ?? '',
       subGroupRowKey: json['subGroupRowKey'] ?? '',
       storeRowKey: json['storeRowKey'] ?? '',
+      storeDescription: json['storeDescription'] ?? '',
       seq: json['seq'] ?? 0,
       imageURL: json['imageURL'] ?? '',
       price: json['price'] != null ? int.parse(json['price'].toString()) : 0,
@@ -82,6 +85,7 @@ class Product {
       'GroupRowKey': groupRowKey,
       'SubGroupRowKey': subGroupRowKey,
       'StoreRowKey': storeRowKey,
+      'storeDescription': storeDescription,
       'Seq': seq,
       'ImageURL': imageURL,
       'Price': price,

@@ -16,8 +16,6 @@ import 'package:shopping/Shop/Stores/StoreList.dart';
 import '../../GlobalTools/AppConfig.dart';
 import '../../GlobalTools/ErrorScreen.dart';
 import '../../GlobalTools/LocalizationManager.dart';
-import '../../main.dart';
-import '../Groups/FilterOption.dart';
 import '../../GlobalTools/ListNoResultFound.dart';
 import '../../GlobalTools/ProgressCustome.dart';
 import '../Cart/_CartShopIcon.dart';
@@ -436,8 +434,6 @@ class _ProductListState extends State<ProductList> {
 
   // Create a map of icon names to IconData
 
-
-
   Widget _buildGroups() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -617,8 +613,6 @@ class _ProductListState extends State<ProductList> {
       ),
     );
   }
-
-
 
   void applyGroupFilter(String group, String rowKey) {
     setState(() {

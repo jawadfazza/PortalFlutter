@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:shopping/Shop/Cart/_CartCard.dart';
 import 'package:shopping/Shop/Models/Product.dart';
 import '../../GlobalTools/AlertMessage.dart';
+import 'package:collection/collection.dart';
+
 
 class ShoppingCart extends StatefulWidget {
   static List<Product> _items = [];
   static ValueNotifier<int> cartItemCount = ValueNotifier<int>(_items.length);
+  static Map<String, List<Product>> groupedCartItems = {};
 
+  static void _groupCartItems() {
+    groupedCartItems = groupBy(ShoppingCart.getItems(), (Product product) => product.storeDescription);
+  }
   static void addProduct(Product product) {
     Product? productFound;
     try {
@@ -25,6 +31,7 @@ class ShoppingCart extends StatefulWidget {
   static void removeProduct(Product product) {
     _items.remove(product);
     cartItemCount.value = _items.length;
+    _groupCartItems();
   }
 
   static List<Product> getItems() {
@@ -65,6 +72,13 @@ class ShoppingCart extends StatefulWidget {
 }
 
 class _ShoppingCartState extends State<ShoppingCart> {
+
+
+  @override
+  void initState() {
+    super.initState();
+    ShoppingCart._groupCartItems();
+  }
   double calculateTotalCost(List<Product> cartItems) {
     double totalCost = 0;
     for (var item in cartItems) {
@@ -110,85 +124,55 @@ class _ShoppingCartState extends State<ShoppingCart> {
     final cartItems = ShoppingCart.getItems();
     return Scaffold(
       appBar: AppBar(
-        //backgroundColor: Colors.blue, // Set your desired background color
         title: Text(
           'Shopping Cart',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
           AlertMessage(
-            buttonText: 'Sure you want to clear the cart?',
-            confirmationText: 'Confirm Message',
+            buttonText: 'Clear Cart',
+            confirmationText: 'Are you sure you want to clear the cart?',
             confirmFunction: confirmFunction,
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: cartItems.length,
-              itemBuilder: (context, index) {
-                final product = cartItems[index];
-                return CartCard(
-                  product: product,
-                  removeProduct: removeProduct,
-                  decreaseQuantity: decreaseQuantity,
-                  increaseQuantity: increaseQuantity,
-                );
-              },
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(16.0),
-            color: Colors.grey[200],
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'Cart Summary',
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+      body: ListView.builder(
+        itemCount: ShoppingCart.groupedCartItems.length,
+        itemBuilder: (context, index) {
+          final storeDescription = ShoppingCart.groupedCartItems.keys.elementAt(index);
+          final productsInStore = ShoppingCart.groupedCartItems[storeDescription]!;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Text(
+                  storeDescription,
+                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.black),
                 ),
-                SizedBox(height: 8.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Total Quantity:',
-                      style: TextStyle(fontSize: 16.0, color: Colors.grey[600]),
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: productsInStore.length,
+                itemBuilder: (context, index) {
+                  final product = productsInStore[index];
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                    child: CartCard(
+                      product: product,
+                      removeProduct: removeProduct,
+                      decreaseQuantity: decreaseQuantity,
+                      increaseQuantity: increaseQuantity,
                     ),
-                    Text(
-                      '${calculateTotalQuantity(cartItems)}',
-                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 4.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Total Cost:',
-                      style: TextStyle(fontSize: 16.0, color: Colors.grey[600]),
-                    ),
-                    Text(
-                      '\$${calculateTotalCost(cartItems).toStringAsFixed(2)}',
-                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () {
-                    // Add the logic to complete the payment here
-                  },
-                  child: Text('Complete Payment'),
-                ),
-              ],
-            ),
-          )
-        ],
+                  );
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
   }
+
 }
