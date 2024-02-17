@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shopping/GlobalTools/AppConfig.dart';
-import 'package:shopping/Shop/Cart/_CartCard.dart';
+import 'package:shopping/Shop/View/Cart/_CartCard.dart';
 import 'package:shopping/Shop/Models/Product.dart';
-import '../../GlobalTools/AlertMessage.dart';
+import '../../../GlobalTools/AlertMessage.dart';
 import 'package:collection/collection.dart';
 import 'package:http/http.dart' as http;
-import '../Models/Store.dart';
+import '../../Models/Store.dart';
 import '../Stores/StoreProductList.dart';
+
 
 
 class ShoppingCart extends StatefulWidget {

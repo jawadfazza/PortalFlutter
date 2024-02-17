@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shopping/Shop/Products/ProductList.dart';
+import 'package:shopping/Shop/View/Products/ProductList.dart';
 import 'package:shopping/main.dart';
 import '../GlobalTools/AppConfig.dart';
 import '../GlobalTools/CustomPageRoute.dart';

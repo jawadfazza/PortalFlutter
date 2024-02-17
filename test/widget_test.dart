@@ -7,7 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shopping/Shop/Cart/CartList.dart';
+import 'package:shopping/Shop/View/Cart/CartList.dart';
 
 import 'package:shopping/main.dart';
 

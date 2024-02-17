@@ -6,7 +6,7 @@ import 'package:flutter_i18n/loaders/decoders/json_decode_strategy.dart';
 import 'package:shopping/GlobalTools/AppConfig.dart';
 import 'Account/Models/Account.dart';
 import 'GlobalTools/LocalizationManager.dart';
-import 'Shop/Products/ProductList.dart';
+import 'Shop/View/Products/ProductList.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';

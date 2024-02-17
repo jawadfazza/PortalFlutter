@@ -40,7 +40,7 @@ dependencies:
   shared_preferences: any
   flutter_spinkit: any
   image_picker: any
-
+  get: ^4.6.5
 
 
 

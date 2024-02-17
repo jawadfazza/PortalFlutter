@@ -9,19 +9,20 @@ import 'package:shopping/Shop/Models/Group.dart';
 import 'package:shopping/Shop/Models/Store.dart';
 import 'package:shopping/Shop/Models/SubGroup.dart';
 import 'package:shopping/GlobalTools/bottomNavigationBar.dart';
-import 'package:shopping/Shop/Products/ProductList.dart';
-import 'package:shopping/Shop/Stores/StoreProductList.dart';
-import 'package:shopping/Shop/Stores/_StoreCard.dart';
-import 'package:shopping/Shop/Stores/StoreDetails.dart';
-import '../../Account/Profile.dart';
-import '../../GlobalTools/AppConfig.dart';
-import '../../GlobalTools/ErrorScreen.dart';
-import '../../GlobalTools/LocalizationManager.dart';
+import 'package:shopping/Shop/View/Products/ProductList.dart';
+import 'package:shopping/Shop/View/Stores/StoreProductList.dart';
+import 'package:shopping/Shop/View/Stores/_StoreCard.dart';
+import 'package:shopping/Shop/View/Stores/StoreDetails.dart';
+import '../../../Account/Profile.dart';
+import '../../../GlobalTools/AppConfig.dart';
+import '../../../GlobalTools/ErrorScreen.dart';
+import '../../../GlobalTools/LocalizationManager.dart';
+import '../../Models/Constraint.dart';
 import '../Groups/FilterOption.dart';
-import '../../GlobalTools/ListNoResultFound.dart';
-import '../../GlobalTools/ProgressCustome.dart';
+import '../../../GlobalTools/ListNoResultFound.dart';
+import '../../../GlobalTools/ProgressCustome.dart';
 import '../Cart/_CartShopIcon.dart';
-import '../Models/Constraint.dart';
+
 
 
 

@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shopping/GlobalTools/ProgressCustome.dart';
-import 'package:shopping/Shop/Cart/CartList.dart';
-import 'package:shopping/Shop/Cart/_CartShopIcon.dart';
+import 'package:shopping/Shop/View/Cart/CartList.dart';
+import 'package:shopping/Shop/View/Cart/_CartShopIcon.dart';
 import 'package:shopping/Shop/Models/Store.dart';
 
 class StoreDetails extends StatefulWidget {

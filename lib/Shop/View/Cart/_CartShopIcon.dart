@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shopping/Shop/Cart/CartList.dart';
+import 'package:shopping/Shop/View/Cart/CartList.dart';
 
 class CartShopIcon extends StatelessWidget{
   @override

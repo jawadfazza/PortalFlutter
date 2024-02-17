@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shopping/GlobalTools/AppConfig.dart';
 import 'package:shopping/Shop/Models/Product.dart';
 
-import '../../GlobalTools/LocalizationManager.dart';
+import '../../../GlobalTools/LocalizationManager.dart';
 
 class ProductInfo extends StatefulWidget {
   final Product product;

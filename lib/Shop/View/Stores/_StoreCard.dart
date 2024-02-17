@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../Models/Store.dart';
+import '../../Models/Store.dart';
 
 class StoreCard extends StatelessWidget {
   final Store store;

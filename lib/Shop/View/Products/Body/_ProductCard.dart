@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shopping/Shop/Stores/_ProductInfo.dart';
-import '../Models/Product.dart';
+import 'package:shopping/Shop/View/Stores/_ProductInfo.dart';
+import '../../../Models/Product.dart';
 import 'ImageGalleryPopup.dart';
 
 class ProductCard extends StatelessWidget {

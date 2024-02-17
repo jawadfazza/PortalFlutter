@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopping/Account/Profile.dart';
 
-import '../Shop/Stores/_ProductInfo.dart';
+import '../Shop/View/Stores/_ProductInfo.dart';
 import 'LoginPage.dart';
 
 class SettingsPage extends StatefulWidget {
