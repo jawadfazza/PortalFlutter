@@ -14,7 +14,7 @@ class HandlingDataView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return statusRequest == StatusRequest.loading
-        ? Center(
+        ? const Center(
             child: Text('.....Islooding'),
           )
         : statusRequest == StatusRequest.offlinefailure

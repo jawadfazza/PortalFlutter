@@ -9,8 +9,8 @@ String _basicAuth = 'Basic ' + base64Encode(utf8.encode('wael:wael1'));
 
 Map<String, String> myheaders = {'authorization': _basicAuth};
 
-class Curd {
-  getrequest(String url) async {
+class CallAPI {
+ static getrequest(String url) async {
     try {
       var respos = await http.get(Uri.parse(url));
       if (respos.statusCode == 200) {
@@ -24,7 +24,7 @@ class Curd {
     }
   }
 
-  postrequest(String url, Map data) async {
+ static postrequest(String url, Map data) async {
     try {
       if (await checkInternet()) {
         var respos =
