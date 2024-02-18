@@ -1,16 +1,14 @@
-import 'dart:convert';
 import 'dart:ui';
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 import 'package:shopping/Shop/Models/Product.dart';
 import '../../GlobalTools/AppConfig.dart';
 import '../../GlobalTools/LocalizationManager.dart';
 import '../../Service/ConnctData.dart';
 import '../Models/Group.dart';
 import '../Models/SubGroup.dart';
-import '../View/Products/ProductList.dart';
 
-class ProductControllar  {
+class ProductControllar extends ChangeNotifier {
+
    int layoutNumber = 2;
    int  pageSize=20;
    int  pageNumber=1;
@@ -18,6 +16,9 @@ class ProductControllar  {
    bool isPageLoading = false;
    bool isResultFound = false;
    bool hasError = false;
+   bool showScrollButton = false;
+   bool isAddingToCart = false;
+   bool isListViewScrolling = false;
 
    String searchQuery = '';
    String errorMessage = '';
@@ -41,19 +42,15 @@ class ProductControllar  {
         }else{
           pageSize = 20;
           pageNumber = 1;
+          products.clear();
         }
-
           isLoading = true;
           hasError = false;
           errorMessage = '';
-          products.clear();
+          notifyListeners();
 
-          var groupRowKey = groupOptions
-              .firstWhere((element) => element.name == selectedGroup)
-              .rowKey;
-          var subGroupRowKey = subGroupOptions
-              .firstWhere((element) => element.name == selectedSubGroup)
-              .rowKey;
+          var groupRowKey = groupOptions.firstWhere((element) => element.name == selectedGroup).rowKey;
+          var subGroupRowKey = subGroupOptions.firstWhere((element) => element.name == selectedSubGroup).rowKey;
           var url = '${AppConfig.baseUrl}/api/Products/${searchQuery==""?'LoadPartialData':'LoadPartialDataWithSearch'}?pageSize=$pageSize&pageNumber=$pageNumber&Lan=${currentLocale.languageCode.toUpperCase()}&groupOptions=$groupRowKey&subGroupOptions=$subGroupRowKey';
           final List<dynamic> jsonList = await CallAPI.getrequest(url) as List<dynamic>;
           final List<Product> newProducts = jsonList.map((json) => Product.fromJson(json)).toList();
@@ -61,11 +58,13 @@ class ProductControllar  {
 
           isLoading = false;
 
+          notifyListeners();
       }
     } catch (error) {
         hasError = true;
         errorMessage = 'Error: $error';
         isLoading = false;
+        notifyListeners();
     }
 
   }

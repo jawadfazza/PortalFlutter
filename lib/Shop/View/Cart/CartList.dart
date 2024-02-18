@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:shopping/GlobalTools/AppConfig.dart';
 import 'package:shopping/Shop/View/Cart/_CartCard.dart';
@@ -13,9 +12,11 @@ import '../Stores/StoreProductList.dart';
 
 
 class ShoppingCart extends StatefulWidget {
-  static List<Product> _items = [];
+  static final List<Product> _items = [];
   static ValueNotifier<int> cartItemCount = ValueNotifier<int>(_items.length);
   static Map<String, List<Product>> groupedCartItems = {};
+
+  const ShoppingCart({super.key});
 
   static void _groupCartItems() {
     groupedCartItems = groupBy(ShoppingCart.getItems(), (Product product) => product.storeDescription);

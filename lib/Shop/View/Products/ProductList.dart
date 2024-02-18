@@ -38,9 +38,7 @@ class _ProductListState extends State<ProductList> {
   ProductControllar  _prodCont= ProductControllar();
   final TextEditingController _searchController = TextEditingController();
   ScrollController _scrollController = ScrollController();
-  bool _showScrollButton = false;
-  bool _isAddingToCart = false;
-  bool _isListViewScrolling = false;
+
 
   @override
  void didChangeDependencies() {
@@ -113,16 +111,24 @@ class _ProductListState extends State<ProductList> {
 
 
   void _scrollListener() {
-    if (!_scrollController.position.atEdge && _scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 500) {
-      _prodCont.fetchData(moredata:true);
+    if (!_scrollController.position.atEdge &&
+        _scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 500) {
+      _prodCont.fetchData(moredata: true);
     }
+
     // Update the visibility of the scroll button
     setState(() {
-      _showScrollButton = _scrollController.position.pixels >= 200;
-      _isListViewScrolling = _scrollController.position.pixels <= 150;
-      _isListViewScrolling = _scrollController.position.pixels > 150;
+      //_prodCont.isLoading = false;
+      _prodCont.showScrollButton =
+          _scrollController.position.pixels >= 200;
+      _prodCont.isListViewScrolling =
+          _scrollController.position.pixels <= 150;
+      _prodCont.isListViewScrolling =
+          _scrollController.position.pixels > 150;
     });
   }
+
 
   void _changeLanguage(Locale newLocale) {
     setState(() {
@@ -134,7 +140,7 @@ class _ProductListState extends State<ProductList> {
   // This function will be called when the product is added to the cart
   void addToCart(Product product) {
     setState(() {
-      _isAddingToCart = true; // Set the flag to indicate adding to cart
+      _prodCont.isAddingToCart = true; // Set the flag to indicate adding to cart
       _prodCont.productRowKey = product.rowKey;
     });
 
@@ -145,14 +151,14 @@ class _ProductListState extends State<ProductList> {
         element.rowKey == _prodCont.productRowKey );
         if (cartItem.isEmpty) {
           ShoppingCart.addProduct(product);
-          _isAddingToCart = false; // Reset the flag after adding to cart
+          _prodCont.isAddingToCart = false; // Reset the flag after adding to cart
           // Show a snackbar message
           _showMessage(
             "${product.name} added to the cart",
             Colors.lightGreen,
           );
         } else {
-          _isAddingToCart = false;
+          _prodCont.isAddingToCart = false;
           _showMessage(
             "${product.name} already on the cart",
             Colors.orangeAccent,
@@ -510,7 +516,7 @@ class _ProductListState extends State<ProductList> {
           );
         },
         addToCart: () => addToCart(product),
-        showProgressIndicator: _isAddingToCart,
+        showProgressIndicator: _prodCont.isAddingToCart,
         rowKey: _prodCont.productRowKey,
         increaseQuantity: _increaseQuantity,
         decreaseQuantity: _decreaseQuantity,
@@ -653,10 +659,10 @@ class _ProductListState extends State<ProductList> {
             : Column(
           children: [
             // Conditionally display widgets based on scrolling state
-            if (!_isListViewScrolling) _buildSearchBox(),
-            if (!_isListViewScrolling) _buildGroups(),
-            if (!_isListViewScrolling) const SizedBox(height: 10),
-            if (!_isListViewScrolling) _buildSubGroups(),
+            if (!_prodCont.isListViewScrolling) _buildSearchBox(),
+            if (!_prodCont.isListViewScrolling) _buildGroups(),
+            if (!_prodCont.isListViewScrolling) const SizedBox(height: 10),
+            if (!_prodCont.isListViewScrolling) _buildSubGroups(),
             Expanded(
               child:  _prodCont.hasError ? ErrorScreen(errorMessage:  _prodCont.errorMessage,
                 onRetry: () {
@@ -692,7 +698,7 @@ class _ProductListState extends State<ProductList> {
         ),
 
         floatingActionButton: Visibility(
-          visible: _showScrollButton,
+          visible: _prodCont.showScrollButton,
           child: FloatingActionButton(
 
             onPressed: () {
