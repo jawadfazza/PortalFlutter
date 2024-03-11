@@ -4,6 +4,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_i18n/loaders/file_translation_loader.dart';
 import 'package:flutter_i18n/loaders/decoders/json_decode_strategy.dart';
 import 'package:shopping/GlobalTools/AppConfig.dart';
+import 'package:shopping/main.dart';
 import 'Account/Models/Account.dart';
 import 'GlobalTools/LocalizationManager.dart';
 import 'Shop/View/Products/ProductList.dart';
@@ -14,10 +15,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   // Initialize GoogleSignIn
- // GoogleSignIn().onCurrentUserChanged.listen((GoogleSignInAccount? account) {
-    // Handle user changes
+  // GoogleSignIn().onCurrentUserChanged.listen((GoogleSignInAccount? account) {
+  // Handle user changes
   //  print('GoogleSignInAccount changed: $account');
- // });
+  // });
   runApp(MyApp());
 }
 
@@ -42,7 +43,7 @@ class _AppBodyState extends State<AppBody> {
   double _imageWidth = 100;
   double _imageHeight = 100;
   bool _animated = false;
-   bool? _isDark = false;
+  bool? _isDark = false;
 
   @override
   void initState() {
@@ -123,64 +124,64 @@ class _AppBodyState extends State<AppBody> {
     } else {
       return MaterialApp(
         theme: ThemeData(
-        appBarTheme: const AppBarTheme(
+          appBarTheme: const AppBarTheme(
 
-          color: Colors.deepPurple, // App bar background color
-          elevation: 0, // No shadow
-          centerTitle: true, // Center align title
+            color: Colors.deepPurple, // App bar background color
+            elevation: 0, // No shadow
+            centerTitle: true, // Center align title
 
-          textTheme: TextTheme(
-            titleLarge: TextStyle(
-              color: Colors.white, // Text color of the app bar title
-              fontSize: 24.0, // Font size of the app bar title
-              fontWeight: FontWeight.bold, // Font weight of the app bar title
+            textTheme: TextTheme(
+              titleLarge: TextStyle(
+                color: Colors.white, // Text color of the app bar title
+                fontSize: 24.0, // Font size of the app bar title
+                fontWeight: FontWeight.bold, // Font weight of the app bar title
+              ),
             ),
           ),
-        ),
-        // Define the text theme
-        textTheme: const TextTheme(
-          bodySmall:  TextStyle(
-            fontSize: 16.0, // Default font size for body text
-            color: Colors.black87, // Default color for body text
-            letterSpacing: 0.5, // Add slight letter spacing for body text
-          ),
-          headlineSmall:  TextStyle(
-            fontSize: 28.0, // Larger font size for headlines
-            color: Colors.black, // Color for headlines
-            fontWeight: FontWeight.bold, // Bold font weight for headlines
-          ),
-          // Add more text styles for different purposes as needed
+          // Define the text theme
+          textTheme: const TextTheme(
+            bodySmall:  TextStyle(
+              fontSize: 16.0, // Default font size for body text
+              color: Colors.black87, // Default color for body text
+              letterSpacing: 0.5, // Add slight letter spacing for body text
+            ),
+            headlineSmall:  TextStyle(
+              fontSize: 28.0, // Larger font size for headlines
+              color: Colors.black, // Color for headlines
+              fontWeight: FontWeight.bold, // Bold font weight for headlines
+            ),
+            // Add more text styles for different purposes as needed
 
-        ),
-        // Define the card theme
-        cardTheme: CardTheme(
-          elevation: 4, // Elevation of cards
-          margin: const EdgeInsets.all(8.0), // Margin around cards
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0), // Rounded corners for cards
           ),
-        ),
-        // Define button theme
-        buttonTheme: ButtonThemeData(
-          buttonColor: Colors.deepPurple, // Button background color
-          textTheme: ButtonTextTheme.primary, // Text color is set to primary
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0), // Rounded corners for buttons
-          ),
-        ),
-        // Define other theme properties as necessary
-        scaffoldBackgroundColor: Colors.grey[200], // Background color for scaffold
-        dividerColor: Colors.grey[300], // Color for dividers
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-            textStyle: const TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
+          // Define the card theme
+          cardTheme: CardTheme(
+            elevation: 4, // Elevation of cards
+            margin: const EdgeInsets.all(8.0), // Margin around cards
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0), // Rounded corners for cards
             ),
           ),
-        ), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple).copyWith(secondary: Colors.pinkAccent),
-      ),
+          // Define button theme
+          buttonTheme: ButtonThemeData(
+            buttonColor: Colors.deepPurple, // Button background color
+            textTheme: ButtonTextTheme.primary, // Text color is set to primary
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0), // Rounded corners for buttons
+            ),
+          ),
+          // Define other theme properties as necessary
+          scaffoldBackgroundColor: Colors.grey[200], // Background color for scaffold
+          dividerColor: Colors.grey[300], // Color for dividers
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+              textStyle: const TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple).copyWith(secondary: Colors.pinkAccent),
+        ),
 
         localizationsDelegates: [
           FlutterI18nDelegate(
@@ -198,7 +199,7 @@ class _AppBodyState extends State<AppBody> {
           Locale('en'),
           Locale('ar'),
         ],
-        home: ProductList(),
+        //home: MyApp1(),
       );
     }
   }

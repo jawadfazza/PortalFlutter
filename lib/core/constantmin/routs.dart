@@ -5,6 +5,6 @@ import '../../main.dart';
 
 
 List<GetPage<dynamic>>? getPage = [
-  GetPage(name: '/', page: () => MyApp()),
+  //GetPage(name: '/', page: () => MyApp()),
   GetPage(name: '/ProductList', page: () => ProductList()),
 ];

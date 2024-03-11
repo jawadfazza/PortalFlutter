@@ -8,7 +8,7 @@ import 'package:shopping/Account/Models/Account.dart';
 import 'package:shopping/GlobalTools/bottomNavigationBar.dart';
 import 'package:shopping/Shop/View/Products/ProductList.dart';
 import 'package:shopping/Shop/View/Stores/StoreList.dart';
-import 'package:shopping/main.dart';
+import 'package:shopping/main1.dart';
 import '../GlobalTools/AppConfig.dart';
 import '../GlobalTools/FormButton.dart';
 import '../GlobalTools/LocalizationManager.dart';
@@ -130,8 +130,7 @@ class _ProfileState extends State<Profile> {
           _showMessage('Profile  registered successfully',
               Colors.lightGreen);
           print(response.body);
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => MyApp()));
+          //Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
         } else {
           // Request failed, handle the error
           print(

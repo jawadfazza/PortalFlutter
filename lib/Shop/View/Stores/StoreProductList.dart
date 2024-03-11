@@ -17,7 +17,7 @@ import 'package:shopping/Shop/View/Stores/StoreList.dart';
 import '../../../GlobalTools/AppConfig.dart';
 import '../../../GlobalTools/ErrorScreen.dart';
 import '../../../GlobalTools/LocalizationManager.dart';
-import '../../../main.dart';
+import '../../../main1.dart';
 import '../Groups/FilterOption.dart';
 import '../../../GlobalTools/ListNoResultFound.dart';
 import '../../../GlobalTools/ProgressCustome.dart';
