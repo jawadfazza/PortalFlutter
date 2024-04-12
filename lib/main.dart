@@ -125,35 +125,29 @@ class _AppBodyState extends State<AppBody> {
       return MaterialApp(
         theme: ThemeData(
           appBarTheme: const AppBarTheme(
-
-            color: Colors.deepPurple, // App bar background color
+            color: Colors.black38, // App bar background color
             elevation: 0, // No shadow
             centerTitle: true, // Center align title
-
-            textTheme: TextTheme(
-              titleLarge: TextStyle(
-                color: Colors.white, // Text color of the app bar title
-                fontSize: 24.0, // Font size of the app bar title
-                fontWeight: FontWeight.bold, // Font weight of the app bar title
-              ),
+            // Since Flutter 2.4, titleTextStyle replaces textTheme for setting AppBar title style.
+            titleTextStyle: TextStyle(
+              color: Colors.white, // Text color of the app bar title
+              fontSize: 24.0, // Font size of the app bar title
+              fontWeight: FontWeight.bold, // Font weight of the app bar title
             ),
           ),
-          // Define the text theme
           textTheme: const TextTheme(
-            bodySmall:  TextStyle(
+            bodySmall: TextStyle(
               fontSize: 16.0, // Default font size for body text
               color: Colors.black87, // Default color for body text
               letterSpacing: 0.5, // Add slight letter spacing for body text
             ),
-            headlineSmall:  TextStyle(
+            headlineSmall: TextStyle(
               fontSize: 28.0, // Larger font size for headlines
               color: Colors.black, // Color for headlines
               fontWeight: FontWeight.bold, // Bold font weight for headlines
             ),
             // Add more text styles for different purposes as needed
-
           ),
-          // Define the card theme
           cardTheme: CardTheme(
             elevation: 4, // Elevation of cards
             margin: const EdgeInsets.all(8.0), // Margin around cards
@@ -161,7 +155,6 @@ class _AppBodyState extends State<AppBody> {
               borderRadius: BorderRadius.circular(12.0), // Rounded corners for cards
             ),
           ),
-          // Define button theme
           buttonTheme: ButtonThemeData(
             buttonColor: Colors.deepPurple, // Button background color
             textTheme: ButtonTextTheme.primary, // Text color is set to primary
@@ -169,19 +162,22 @@ class _AppBodyState extends State<AppBody> {
               borderRadius: BorderRadius.circular(8.0), // Rounded corners for buttons
             ),
           ),
-          // Define other theme properties as necessary
           scaffoldBackgroundColor: Colors.grey[200], // Background color for scaffold
           dividerColor: Colors.grey[300], // Color for dividers
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
+              primary: Colors.deepPurple, // Button background color
+              onPrimary: Colors.white, // Text color for elevated buttons
               padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
               textStyle: const TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
-          ), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple).copyWith(secondary: Colors.pinkAccent),
+          ),
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple).copyWith(secondary: Colors.pinkAccent),
         ),
+
 
         localizationsDelegates: [
           FlutterI18nDelegate(
@@ -199,7 +195,7 @@ class _AppBodyState extends State<AppBody> {
           Locale('en'),
           Locale('ar'),
         ],
-        //home: MyApp1(),
+        home: ProductList(),
       );
     }
   }

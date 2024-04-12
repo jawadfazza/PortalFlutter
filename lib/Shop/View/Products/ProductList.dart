@@ -3,23 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopping/Account/LoginPage.dart';
-import 'package:shopping/Account/Profile.dart';
 import 'package:shopping/Account/SettingsPage.dart';
-import 'package:shopping/Shop/Controllar/ProductControllar.dart';
+import 'package:shopping/Shop/Controller/ProductControllar.dart';
 import 'package:shopping/Shop/View/Cart/CartList.dart';
-import 'package:http/http.dart' as http;
 import 'package:shopping/Shop/Models/Group.dart';
 import 'package:shopping/Shop/Models/Product.dart';
 import 'package:shopping/Shop/Models/SubGroup.dart';
 import 'package:shopping/Shop/View/Products/Body/_ProductCard.dart';
 import 'package:shopping/Shop/View/Products/Body/ProductDetails.dart';
 import 'package:shopping/Shop/View/Stores/StoreList.dart';
-import '../../../GlobalTools/AppConfig.dart';
-import '../../../GlobalTools/ErrorScreen.dart';
 import '../../../GlobalTools/LocalizationManager.dart';
 import '../../../GlobalTools/ListNoResultFound.dart';
 import '../../../GlobalTools/ProgressCustome.dart';
-
 import '../../../GlobalTools/bottomNavigationBar.dart';
 import '../../Models/Constraint.dart';
 import '../Cart/_CartShopIcon.dart';
@@ -35,10 +30,10 @@ class ProductList extends StatefulWidget {
 
 class _ProductListState extends State<ProductList> {
   late SharedPreferences _prefs;
-  ProductControllar  _prodCont= ProductControllar();
+  final ProductController  _prodCont= ProductController();
   final TextEditingController _searchController = TextEditingController();
   ScrollController _scrollController = ScrollController();
-
+  bool _showScrollButton = false;
 
   @override
  void didChangeDependencies() {
@@ -61,75 +56,36 @@ class _ProductListState extends State<ProductList> {
     handleAuthenticationAction();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    _prodCont.groupOptions.add(Group(
-      partitionKey: '',
-      rowKey: '',
-      seq: 1,
-      name: '-',
-      description: '',
-      languageID: _prodCont.currentLocale.languageCode,
-      imageURL: '',
-      active: true,
-    ));
-    fetchDataGroups();
-    _prodCont.filteredSubGroupOptions.add(SubGroup(
-      partitionKey: '',
-      rowKey: '',
-      seq: 1,
-      name: '-',
-      languageID: _prodCont.currentLocale.languageCode,
-      imageURL: '',
-      active: true,
-      groupRowKey: '',
-    ));
-    _prodCont.subGroupOptions.add(SubGroup(
-      partitionKey: '',
-      rowKey: '',
-      seq: 1,
-      name: '-',
-      languageID: _prodCont.currentLocale.languageCode,
-      imageURL: '',
-      active: true,
-      groupRowKey: '',
-    ));
-    fetchDataSubGroups();
-    _prodCont.fetchData(moredata: false).then((_) {
+    _prodCont.fetchDataGroups();
+    _prodCont.fetchDataSubGroups();
+    _prodCont.fetchData(moreData: false).then((_) {
       // Set isPageLoading to false after fetchData completes
       setState(() {
         _prodCont.isPageLoading = false;
       });
     });
   }
-
-
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     super.dispose();
   }
-
-
   void _scrollListener() {
-    if (!_scrollController.position.atEdge &&
-        _scrollController.position.pixels >=
-            _scrollController.position.maxScrollExtent - 500) {
-      _prodCont.fetchData(moredata: true);
+    if (_scrollController.position.atEdge) {
+      final isBottom = _scrollController.position.pixels != 0;
+      if (isBottom && !_prodCont.isFetching) {
+        _prodCont.fetchData(moreData: true).then((value) =>
+            setState(()=> _prodCont.isFetching = false )
+        );
+      }
     }
-
-    // Update the visibility of the scroll button
-    setState(() {
-      //_prodCont.isLoading = false;
-      _prodCont.showScrollButton =
-          _scrollController.position.pixels >= 200;
-      _prodCont.isListViewScrolling =
-          _scrollController.position.pixels <= 150;
-      _prodCont.isListViewScrolling =
-          _scrollController.position.pixels > 150;
-    });
+    bool shouldShowButton = _scrollController.position.pixels > 150;
+    if (_showScrollButton != shouldShowButton) {
+      setState(() => _showScrollButton = shouldShowButton);
+    }
   }
-
-
   void _changeLanguage(Locale newLocale) {
     setState(() {
       FlutterI18n.refresh(context, newLocale);
@@ -206,147 +162,64 @@ class _ProductListState extends State<ProductList> {
 
 
 
-  Future<void> fetchDataGroups() async {
-    try {
-      var url = '${AppConfig.baseUrl}/api/Groups/LoadAllData?Lan=${_prodCont.currentLocale
-          .languageCode.toUpperCase()}';
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
-        final List<dynamic> jsonList = jsonResponse as List<dynamic>;
-        final List<Group> newGroups =
-        jsonList.map((json) => Group.fromJson(json)).toList();
-        //print(newGroups);
-        setState(() {
-          _prodCont.groupOptions.clear();
-          _prodCont.groupOptions.add(Group(partitionKey: '',
-              rowKey: '',
-              seq: 1,
-              name: '-',
-              description: '',
-              languageID: _prodCont.currentLocale.languageCode,
-              imageURL: '',
-              active: true));
-          _prodCont. groupOptions.addAll(newGroups);
 
-        });
-      }
-    } catch (error) {
-      print(error);
-    }
-  }
 
-  Future<void> fetchDataSubGroups() async {
-    try {
-      var url = '${AppConfig.baseUrl}/api/SubGroups/LoadAllData?Lan=${_prodCont.currentLocale
-          .languageCode.toUpperCase()}';
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
-        final List<dynamic> jsonList = jsonResponse as List<dynamic>;
-        final List<SubGroup> newSubGroups =
-        jsonList.map((json) => SubGroup.fromJson(json)).toList();
-        newSubGroups.sort((a, b) => a.name.compareTo(b.name));
-
-        //print(newSubGroups.);
-        setState(() {
-          _prodCont.subGroupOptions.clear();
-          _prodCont.subGroupOptions.add(SubGroup(partitionKey: '',
-              rowKey: '',
-              seq: 1,
-              name: '-',
-              languageID: Localizations
-                  .localeOf(context)
-                  .languageCode,
-              imageURL: '',
-              active: true,
-              groupRowKey: ''));
-          _prodCont.subGroupOptions.addAll(newSubGroups);
-
-          _prodCont.filteredSubGroupOptions.clear();
-          _prodCont.filteredSubGroupOptions.add(SubGroup(partitionKey: '',
-              rowKey: '',
-              seq: 1,
-              name: '-',
-              languageID: Localizations
-                  .localeOf(context)
-                  .languageCode,
-              imageURL: '',
-              active: true,
-              groupRowKey: ''));
-          _prodCont.filteredSubGroupOptions.addAll(newSubGroups);
-         //newSubGroups.forEach((element) {
-         //  if(element.groupRowKey=='8c4b1276-0799-403b-8cbf-5a8d02d0fda3') {
-         //    print(element.rowKey + "," + element.name + "\n");
-         //  }
-         //});
-        });
-      }
-    } catch (error) {
-      print(error);
-    }
-  }
 
   // Create a map of icon names to IconData
 
   Widget _buildGroups() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 2),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       child: Row(
         children: _prodCont.groupOptions.map((Group value) {
+          bool isSelected = _prodCont.selectedGroup == value.name;
           return GestureDetector(
             onTap: () {
               setState(() {
                 _prodCont.selectedGroup = value.name;
-                applyGroupFilter(value.name,value.rowKey);
+                applyGroupFilter(value.name, value.rowKey);
               });
             },
-            child: Container(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
               width: 80,
               height: 90,
-
               margin: const EdgeInsets.symmetric(horizontal: 5),
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
               decoration: BoxDecoration(
-                color: _prodCont.selectedGroup == value.name
-                    ? Colors.indigo
-                    : Colors.grey[100],
+                color: isSelected ? Colors.indigo : Colors.grey[100],
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: _prodCont.selectedGroup == value.name
-                      ? Colors.blue
-                      : Colors.grey[300]!,
-                  width: 1.5,
+                  color: isSelected ? Colors.blue : Colors.grey[300]!,
+                  width: 2,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 3,
-                    offset: const Offset(0, 2),
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: isSelected ? 6 : 3,
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
+                    // Assuming Constraint.iconMapping is a Map that maps group keys to Icons.
+                    Constraint.iconMapping[value.rowKey] ?? Icons.group, // Fallback icon
                     size: 40,
-                    Constraint.iconMapping[value.rowKey], // Replace this with the desired icon
-                    color: _prodCont.selectedGroup == value.name
-                        ? Colors.white
-                        : Colors.black,
+                    color: isSelected ? Colors.white : Colors.black,
                   ),
-                  const SizedBox(height: 5), // Adjust the spacing between icon and text
+                  const SizedBox(height: 5),
                   Text(
-                    textAlign: TextAlign.center,
                     value.name.split("&")[0],
+                    textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: _prodCont.selectedGroup == value.name
-                          ? Colors.white
-                          : Colors.black,
+                      color: isSelected ? Colors.white : Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
-                      overflow: TextOverflow.visible
                     ),
                   ),
                 ],
@@ -357,13 +230,13 @@ class _ProductListState extends State<ProductList> {
       ),
     );
   }
-
   Widget _buildSubGroups() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 2),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       child: Row(
         children: _prodCont.filteredSubGroupOptions.map((SubGroup value) {
+          bool isSelected = _prodCont.selectedSubGroup == value.name;
           return GestureDetector(
             onTap: () {
               setState(() {
@@ -371,50 +244,45 @@ class _ProductListState extends State<ProductList> {
                 applySubGroupFilter(value.name);
               });
             },
-            child: Container(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
               width: 75,
               height: 75,
-              margin: const EdgeInsets.symmetric(horizontal: 2),
+              margin: const EdgeInsets.symmetric(horizontal: 5),
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
               decoration: BoxDecoration(
-                color: _prodCont.selectedSubGroup == value.name
-                    ? Colors.indigo
-                    : Colors.grey[100],
+                color: isSelected ? Colors.indigo : Colors.grey[100],
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: _prodCont.selectedSubGroup == value.name
-                      ? Colors.blue
-                      : Colors.grey[300]!,
-                  width: 1.5,
+                  color: isSelected ? Colors.blue : Colors.grey[300]!,
+                  width: 2,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 3,
-                    offset: const Offset(0, 2),
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: isSelected ? 6 : 3,
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Constraint.subIconMapping[value.rowKey] ?? Icons.error,
+                    Constraint.subIconMapping[value.rowKey] ?? Icons.error, // Provide a default icon
                     size: 20,
-                    color: _prodCont.selectedSubGroup == value.name
-                        ? Colors.white
-                        : Colors.black,
+                    color: isSelected ? Colors.white : Colors.black,
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    value.name.length>=15? value.name.substring(0,15):value.name,
+                    value.name.length >= 15 ? value.name.substring(0, 15) : value.name,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: _prodCont.selectedSubGroup == value.name
-                          ? Colors.white
-                          : Colors.black,
+                      color: isSelected ? Colors.white : Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 9,
-                      overflow: TextOverflow.visible,
+                      overflow: TextOverflow.ellipsis, // Handle long names gracefully
                     ),
                   ),
                 ],
@@ -425,7 +293,6 @@ class _ProductListState extends State<ProductList> {
       ),
     );
   }
-
   Widget _buildSearchBox() {
     return Padding(
       padding: const EdgeInsets.all(10.0),
@@ -437,7 +304,12 @@ class _ProductListState extends State<ProductList> {
             _prodCont.pageSize = 20;
             _prodCont.pageNumber += 1;
             _prodCont.products.clear();
-            _prodCont.fetchData(moredata: false);
+            _prodCont.fetchData(moreData: false).then((_) {
+              // Set isPageLoading to false after fetchData completes
+              setState(() {
+                _prodCont.isPageLoading = false;
+              });
+            });
           });
         },
         onChanged: (value) {
@@ -476,54 +348,76 @@ class _ProductListState extends State<ProductList> {
       _prodCont.filteredSubGroupOptions = group == '-' ? _prodCont.subGroupOptions :
       _prodCont.subGroupOptions.where((element) => element.groupRowKey == rowKey)
           .toList();
-      _prodCont.fetchData(moredata: false);
+      _prodCont.fetchData(moreData: false).then((_) {
+        // Set isPageLoading to false after fetchData completes
+        setState(() {
+          _prodCont.isPageLoading = false;
+        });
+      });
     });
   }
-
   void applySubGroupFilter(String subGroup) {
     setState(() {
       _prodCont.selectedSubGroup = subGroup;
-      _prodCont.fetchData(moredata: false);
+      _prodCont.fetchData(moreData: false).then((_) {
+        // Set isPageLoading to false after fetchData completes
+        setState(() {
+          _prodCont.isPageLoading = false;
+        });
+      });;
     });
   }
 
   // Add this method to your _ProductListState class
-  Widget _buildListItem(BuildContext context, int index) {
-    if (index == _prodCont.products.length) {
-      if (_prodCont.isLoading) {
-        return (_prodCont.pageNumber == 1) ? ProgressCustom(
-          strokeWidth: 4.0, // Custom stroke width
-          size: 600.0, // Custom size
-        ) : ProgressCustom();
-      }
-      if (_prodCont.searchQuery != "" && _prodCont.products.isEmpty) {
-        return ListNoResultFound(onClear: _clearSearch,);
-      }
-      return const SizedBox();
-    }
-    else {
-      final product = _prodCont.products[index];
-
-      return ProductCard(
-        product: product,
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProductDetails(product: product),
-
-            ),
-          );
+  Widget _buildProductList() {
+    return _prodCont.hasError
+        ? SliverFillRemaining(
+      child: Center(
+        child: Text(_prodCont.errorMessage), // Display error message
+      ),
+    )
+        : SliverList(
+      delegate: SliverChildBuilderDelegate(
+            (context, index) {
+          // Replace the placeholder logic with the actual item building logic
+          if (index == _prodCont.products.length) {
+            if (!_prodCont.isFetching) {
+              // Check if it's the first page and loading is not in progress to show the custom progress indicator
+              return  ProgressCustom(); // Show the progress indicator for subsequent pages
+            }
+            if (_prodCont.searchQuery != "" && _prodCont.products.isEmpty) {
+              // Show a 'no results found' widget if the search query is not empty but no products are found
+              return ListNoResultFound(onClear: _clearSearch,);
+            }
+            // Return an empty box if there are no more items to load and it's not an error state
+            return const SizedBox();
+          } else {
+            // Build each product card
+            final product = _prodCont.products[index];
+            return ProductCard(
+              product: product,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductDetails(product: product),
+                  ),
+                );
+              },
+              addToCart: () => addToCart(product),
+              showProgressIndicator: _prodCont.isAddingToCart,
+              rowKey: _prodCont.productRowKey,
+              increaseQuantity: _increaseQuantity,
+              decreaseQuantity: _decreaseQuantity,
+              layoutNumber: _prodCont.layoutNumber,
+            );
+          }
         },
-        addToCart: () => addToCart(product),
-        showProgressIndicator: _prodCont.isAddingToCart,
-        rowKey: _prodCont.productRowKey,
-        increaseQuantity: _increaseQuantity,
-        decreaseQuantity: _decreaseQuantity,
-        layoutNumber: _prodCont.layoutNumber,
-      );
-    }
+        childCount: _prodCont.products.length + 1, // Add one more for the loading or 'no more items' widget
+      ),
+    );
   }
+
 
   void _clearSearch() {
     setState(() {
@@ -532,8 +426,14 @@ class _ProductListState extends State<ProductList> {
       // Add other necessary operations related to clearing the search here
       _prodCont.pageSize = 20;
       _prodCont.pageNumber += 1;
+      _prodCont.isFetching=true;
       _prodCont.products.clear();
-      _prodCont.fetchData(moredata: false);
+      _prodCont.fetchData(moreData: false).then((_) {
+        // Set isPageLoading to false after fetchData completes
+        setState(() {
+          _prodCont.isPageLoading = false;
+        });
+      });
     });
   }
 
@@ -541,17 +441,9 @@ class _ProductListState extends State<ProductList> {
 
   // Function to handle the action when the user is not authenticated
   Future<void> handleAuthenticationAction() async {
-    // ignore: use_build_context_synchronously
-
-    // Implement the action needed when the user is not authenticated
-    // For example, show a login dialog or navigate to the authentication screen
-    // You can replace this with your actual authentication logic
-    // For demonstration purposes, let's show a simple dialog
-
     _prefs = await SharedPreferences.getInstance();
-    _prodCont. RowKey = _prefs.getString('RowKey');
-
-    if ( _prodCont.RowKey == null) {
+    _prodCont.rowKey = _prefs.getString('RowKey');
+    if ( _prodCont.rowKey == null) {
       // Retrieve other user information using appropriate keys
       showDialog(
         context: context,
@@ -590,7 +482,6 @@ class _ProductListState extends State<ProductList> {
   }
 
   int _selectedIndex = 0;
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -616,6 +507,45 @@ class _ProductListState extends State<ProductList> {
     }
   }
 
+  bool isExpanded = false;  // Tracks whether the expansion tile is expanded
+  double appBarHeight = 120;  // Default height of the SliverAppBar
+  void _toggleExpansion() {
+    setState(() {
+      isExpanded = !isExpanded;
+      appBarHeight = isExpanded ? 350 : 120;  // Adjust these values as needed
+    });
+  }
+  Widget _buildFlexibleSpaceContent(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              children: <Widget>[
+                _buildSearchBox(),
+                ExpansionTile(
+                  title: Text(FlutterI18n.translate(context, "Filters"), style: TextStyle(color: Colors.white)),
+                  backgroundColor: Colors.white12,
+                  initiallyExpanded: isExpanded,
+                  onExpansionChanged: (bool expanded) {
+                    _toggleExpansion();  // Update the expansion state and the app bar height
+                  },
+                  children: [
+                    _buildGroups(),
+                    const SizedBox(height: 1),
+                    _buildSubGroups()
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     //_changeLanguage(currentLocale);
@@ -624,8 +554,6 @@ class _ProductListState extends State<ProductList> {
     _prodCont.currentLocale.languageCode.toLowerCase() == 'ar'
         ? TextDirection.rtl
         : TextDirection.ltr;
-
-
     return Directionality(
       textDirection: textDirection,
 
@@ -639,59 +567,41 @@ class _ProductListState extends State<ProductList> {
             CartShopIcon(),
             IconButton(onPressed: () {
               setState(() {
-                _prodCont.layoutNumber = ( _prodCont.layoutNumber == 2 ? 1 : 2);
+                _prodCont.layoutNumber = (_prodCont.layoutNumber == 2 ? 1 : 2);
               });
             },
-                icon: Icon(
-                    _prodCont.layoutNumber == 2 ? Icons.view_list : Icons.list_alt)),
-                     !isAuthenticated ?
-                     IconButton(
-                onPressed: handleAuthenticationAction,
-                icon: const Icon(Icons.error),
-                color: Colors.deepOrange
-            ) : Container(),
+                icon: Icon(_prodCont.layoutNumber == 2 ? Icons.view_list : Icons.list_alt)), !isAuthenticated ? IconButton(onPressed: handleAuthenticationAction, icon: const Icon(Icons.error), color: Colors.deepOrange) : Container(),
           ],
         ),
-        body:  _prodCont.isPageLoading
-            ? const Center(
-          child: CircularProgressIndicator(), // Display a loading indicator
-        )
-            : Column(
-          children: [
-            // Conditionally display widgets based on scrolling state
-            if (!_prodCont.isListViewScrolling) _buildSearchBox(),
-            if (!_prodCont.isListViewScrolling) _buildGroups(),
-            if (!_prodCont.isListViewScrolling) const SizedBox(height: 10),
-            if (!_prodCont.isListViewScrolling) _buildSubGroups(),
-            Expanded(
-              child:  _prodCont.hasError ? ErrorScreen(errorMessage:  _prodCont.errorMessage,
-                onRetry: () {
-                  setState(() {
-                    _prodCont.hasError = false;
-                    _prodCont.errorMessage = '';
-                    _prodCont.products.clear();
-                    _prodCont.fetchData(moredata: false);
-                  });
-                },
-              ) : RefreshIndicator(
-                onRefresh: () async {
-                  await  _prodCont.fetchData(moredata: false); // Example: Fetching data
-                  await Future.delayed(const Duration(milliseconds: 500)); // Adjust duration as needed
-                },
-                child: ListView.builder(
-
-                  shrinkWrap: true,
-                  controller: _scrollController,
-
-                  itemCount:  _prodCont.products.length + 1,
-                  itemBuilder: (context, index) {
-                    return _buildListItem(context, index);
-                  },
+        body: _prodCont.isPageLoading
+            ? const Center(child: CircularProgressIndicator())
+            : CustomScrollView(
+          controller: _scrollController,
+          slivers: <Widget>[
+            SliverAppBar(
+              backgroundColor: Colors.transparent,  // Make the background transparent
+              floating: true,
+              expandedHeight: appBarHeight,
+              flexibleSpace: FlexibleSpaceBar(
+                collapseMode: CollapseMode.parallax,
+                background: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.black38, Colors.transparent],
+                    ),
+                  ),
+                  child: _buildFlexibleSpaceContent(context),
                 ),
               ),
             ),
+
+
+            _buildProductList(),
           ],
         ),
+
         bottomNavigationBar: ProfileBottomNavigationBar(
           currentIndex: _selectedIndex,
           onItemTapped: _onItemTapped,
@@ -705,9 +615,12 @@ class _ProductListState extends State<ProductList> {
               // Scroll to the top of the list using the ScrollController
               _scrollController.animateTo(
                 0.0,
-                duration: const Duration(milliseconds: 500),
+                duration: const Duration(milliseconds: 1000),
                 curve: Curves.easeInOut,
               );
+              setState(() {
+                //_prodCont.showScrollButton=false;
+              });
             },
             child: const Icon(Icons.arrow_upward),
           ),

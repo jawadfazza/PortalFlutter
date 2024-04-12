@@ -8,7 +8,7 @@ import 'package:shopping/Account/Models/Account.dart';
 import 'package:shopping/GlobalTools/bottomNavigationBar.dart';
 import 'package:shopping/Shop/View/Products/ProductList.dart';
 import 'package:shopping/Shop/View/Stores/StoreList.dart';
-import 'package:shopping/main1.dart';
+
 import '../GlobalTools/AppConfig.dart';
 import '../GlobalTools/FormButton.dart';
 import '../GlobalTools/LocalizationManager.dart';
